@@ -1,0 +1,11 @@
+name: 'RecipeViewer'
+version: "${version}"
+api-version: '1.21.4'
+bootstrapper: 'io.github.md5sha256.recipeviewer.RecipeViewerBootstrap'
+main: 'io.github.md5sha256.recipeviewer.RecipeViewerPlugin'
+authors: [ md5sha256 ]
+dependencies:
+  server:
+    Nexo:
+      load: BEFORE
+      required: false
