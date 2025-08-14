@@ -16,13 +16,14 @@ import java.util.function.Function;
 public class ShapedRecipeRenderer implements RecipeRenderer<ShapedRecipe> {
 
     @Override
+    @Nonnull
     public InventoryHolder renderRecipe(
             @Nonnull Server server,
             @Nonnull ShapedRecipe recipe
     ) {
         Function<InventoryHolder, Inventory> func = holder -> {
-            CraftingInventory inventory
-                    = (CraftingInventory) server.createInventory(holder, InventoryType.CRAFTING);
+            Inventory inventory = server.createInventory(holder, InventoryType.WORKBENCH);
+            inventory.setItem(0, recipe.getResult());
             String[] shape = recipe.getShape();
             Map<Character, RecipeChoice> choiceMap = recipe.getChoiceMap();
             for (int row = 0; row < shape.length; row++) {
@@ -31,7 +32,7 @@ public class ShapedRecipeRenderer implements RecipeRenderer<ShapedRecipe> {
                     RecipeChoice choice = choiceMap.get(rowChars[col]);
                     ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice)
                             .getFirst();
-                    inventory.setItem((row * rowChars.length) + col, item);
+                    inventory.setItem((row * rowChars.length) + col + 1, item);
                 }
             }
             return inventory;
