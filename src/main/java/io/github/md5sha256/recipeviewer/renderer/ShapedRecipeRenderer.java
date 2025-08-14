@@ -1,11 +1,14 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
+import net.kyori.adventure.pointer.Pointer;
 import org.bukkit.Server;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 
@@ -23,16 +26,16 @@ public class ShapedRecipeRenderer implements RecipeRenderer<ShapedRecipe> {
     ) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.WORKBENCH);
-            inventory.setItem(0, recipe.getResult());
             String[] shape = recipe.getShape();
             Map<Character, RecipeChoice> choiceMap = recipe.getChoiceMap();
+            CraftingUtil.setOutputSlot(inventory, recipe.getResult());
             for (int row = 0; row < shape.length; row++) {
                 char[] rowChars = shape[row].toCharArray();
                 for (int col = 0; col < rowChars.length; col++) {
                     RecipeChoice choice = choiceMap.get(rowChars[col]);
                     ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice)
                             .getFirst();
-                    inventory.setItem((row * rowChars.length) + col + 1, item);
+                    CraftingUtil.setCraftingSlot(inventory, row, col, item);
                 }
             }
             return inventory;

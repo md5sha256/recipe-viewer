@@ -22,11 +22,11 @@ public class ShapelessRecipeRenderer implements RecipeRenderer<ShapelessRecipe> 
 
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.WORKBENCH);
-            inventory.setItem(0, recipe.getResult());
+            CraftingUtil.setOutputSlot(inventory, recipe.getResult());
             for (int row = 0; row < choices.size(); row++) {
                 RecipeChoice choice = choices.get(row);
                 ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice).getFirst();
-                inventory.setItem(row + 1, item);
+                CraftingUtil.setCraftingSlot(inventory, row, 0, item);
             }
             return inventory;
         };

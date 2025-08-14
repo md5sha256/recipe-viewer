@@ -45,12 +45,12 @@ public class RecipeViewCommand extends CommandBean<Source> {
         Player player = context.sender().source();
         Recipe recipe = context.get(KEY_RECIPE);
         if (recipe instanceof ShapedRecipe shapedRecipe) {
-            Inventory inventory = new ShapedRecipeRenderer().renderRecipe(this.server, shapedRecipe)
+            Inventory inventory = new ShapedRecipeRenderer().renderRecipe(this.server, shapedRecipe, )
                     .getInventory();
             player.openInventory(inventory);
         } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
             Inventory inventory = new ShapelessRecipeRenderer().renderRecipe(this.server,
-                    shapelessRecipe).getInventory();
+                    shapelessRecipe, ).getInventory();
             player.openInventory(inventory);
         } else {
             player.sendMessage(Component.text("Recipe type not supported: " + recipe.getClass(),
