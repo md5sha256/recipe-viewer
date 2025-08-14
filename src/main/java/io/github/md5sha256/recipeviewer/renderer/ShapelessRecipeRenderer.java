@@ -1,5 +1,8 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
+import io.github.md5sha256.recipeviewer.util.CraftingUtil;
+import io.github.md5sha256.recipeviewer.util.RecipeChoiceUtil;
+import io.github.md5sha256.recipeviewer.util.RecipeView;
 import org.bukkit.Server;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;

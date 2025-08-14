@@ -1,4 +1,4 @@
-package io.github.md5sha256.recipeviewer.renderer;
+package io.github.md5sha256.recipeviewer.util;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;

@@ -1,6 +1,6 @@
 package io.github.md5sha256.recipeviewer;
 
-import io.github.md5sha256.recipeviewer.renderer.RecipeView;
+import io.github.md5sha256.recipeviewer.util.RecipeView;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

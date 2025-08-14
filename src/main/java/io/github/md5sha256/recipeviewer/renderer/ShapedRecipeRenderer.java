@@ -1,14 +1,13 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
-import net.kyori.adventure.pointer.Pointer;
+import io.github.md5sha256.recipeviewer.util.CraftingUtil;
+import io.github.md5sha256.recipeviewer.util.RecipeChoiceUtil;
+import io.github.md5sha256.recipeviewer.util.RecipeView;
 import org.bukkit.Server;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 

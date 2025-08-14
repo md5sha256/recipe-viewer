@@ -2,23 +2,38 @@ package io.github.md5sha256.recipeviewer;
 
 import io.github.md5sha256.recipeviewer.command.RecipeParser;
 import io.github.md5sha256.recipeviewer.command.RecipeViewCommand;
+import io.github.md5sha256.recipeviewer.renderer.Renderers;
+import io.github.md5sha256.recipeviewer.renderer.ShapedRecipeRenderer;
+import io.github.md5sha256.recipeviewer.renderer.ShapelessRecipeRenderer;
 import io.leangen.geantyref.TypeToken;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import org.bukkit.Keyed;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
 import org.incendo.cloud.paper.util.sender.Source;
 
+
 public final class RecipeViewerPlugin extends JavaPlugin {
+
+    private final Renderers renderers = new Renderers();
+
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        registerRenderers();
         registerCommands();
+    }
+
+    private void registerRenderers() {
+        this.renderers.registerRenderer(ShapedRecipe.class, new ShapedRecipeRenderer())
+                .registerRenderer(ShapelessRecipe.class, new ShapelessRecipeRenderer());
     }
 
     private void registerCommands() {
@@ -29,7 +44,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .registerMapping(new TypeToken<RecipeParser<Source>>() {
                                  },
                         x -> x.toConstant(ArgumentTypes.namespacedKey()).cloudSuggestions());
-        manager.command(new RecipeViewCommand(getServer()));
+        manager.command(new RecipeViewCommand(getServer(), this.renderers));
     }
 
     private void printRecipes() {

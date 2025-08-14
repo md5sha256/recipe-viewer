@@ -1,15 +1,11 @@
 package io.github.md5sha256.recipeviewer.command;
 
-import io.github.md5sha256.recipeviewer.renderer.ShapedRecipeRenderer;
-import io.github.md5sha256.recipeviewer.renderer.ShapelessRecipeRenderer;
+import io.github.md5sha256.recipeviewer.renderer.Renderers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.bean.CommandBean;
@@ -19,14 +15,18 @@ import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.incendo.cloud.paper.util.sender.Source;
 
+import javax.annotation.Nonnull;
+
 public class RecipeViewCommand extends CommandBean<Source> {
 
     private static final CloudKey<Recipe> KEY_RECIPE = CloudKey.of("recipe", Recipe.class);
 
     private final Server server;
+    private final Renderers renderers;
 
-    public RecipeViewCommand(Server server) {
+    public RecipeViewCommand(@Nonnull Server server, @Nonnull Renderers renderers) {
         this.server = server;
+        this.renderers = renderers;
     }
 
     @Override
@@ -44,17 +44,10 @@ public class RecipeViewCommand extends CommandBean<Source> {
     private void handleCommand(@NonNull CommandContext<PlayerSource> context) {
         Player player = context.sender().source();
         Recipe recipe = context.get(KEY_RECIPE);
-        if (recipe instanceof ShapedRecipe shapedRecipe) {
-            Inventory inventory = new ShapedRecipeRenderer().renderRecipe(this.server, shapedRecipe, )
-                    .getInventory();
-            player.openInventory(inventory);
-        } else if (recipe instanceof ShapelessRecipe shapelessRecipe) {
-            Inventory inventory = new ShapelessRecipeRenderer().renderRecipe(this.server,
-                    shapelessRecipe, ).getInventory();
-            player.openInventory(inventory);
-        } else {
-            player.sendMessage(Component.text("Recipe type not supported: " + recipe.getClass(),
-                    NamedTextColor.RED));
+        if (this.renderers.tryRenderRecipe(this.server, player, recipe)) {
+            return;
         }
+        player.sendMessage(Component.text("Recipe type not supported: " + recipe.getClass(),
+                NamedTextColor.RED));
     }
 }
