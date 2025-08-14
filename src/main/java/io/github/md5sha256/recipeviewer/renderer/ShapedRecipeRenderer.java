@@ -32,6 +32,9 @@ public class ShapedRecipeRenderer implements RecipeRenderer<ShapedRecipe> {
                 char[] rowChars = shape[row].toCharArray();
                 for (int col = 0; col < rowChars.length; col++) {
                     RecipeChoice choice = choiceMap.get(rowChars[col]);
+                    if (choice == null) {
+                        continue;
+                    }
                     ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice)
                             .getFirst();
                     CraftingUtil.setCraftingSlot(inventory, row, col, item);
