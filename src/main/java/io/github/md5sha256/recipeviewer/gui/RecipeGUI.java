@@ -122,7 +122,7 @@ public class RecipeGUI {
 
     @Nonnull
     private GuiItem createRecipeItem(@Nonnull Recipe recipe) {
-        ItemStack icon = recipe.getResult();
+        ItemStack icon = recipe.getResult().asOne();
         return new GuiItem(icon, event -> {
             event.getView().close();
             if (!this.renderers.tryRenderRecipe(this.server, event.getWhoClicked(), recipe)) {
