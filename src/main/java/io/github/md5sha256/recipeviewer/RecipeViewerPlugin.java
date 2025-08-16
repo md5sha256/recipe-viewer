@@ -12,9 +12,6 @@ import io.github.md5sha256.recipeviewer.config.RecipeListSetting;
 import io.github.md5sha256.recipeviewer.config.Serializers;
 import io.github.md5sha256.recipeviewer.config.SimpleItemStack;
 import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
-import io.github.md5sha256.recipeviewer.model.RecipeCategory;
-import io.github.md5sha256.recipeviewer.model.RecipeCategoryPointer;
-import io.github.md5sha256.recipeviewer.model.RecipeList;
 import io.github.md5sha256.recipeviewer.renderer.BlastingRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.FurnaceRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.Renderers;
@@ -32,7 +29,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.BlastingRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -75,15 +71,26 @@ public final class RecipeViewerPlugin extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         this.nexoFeature = new NexoFeature(getServer());
-        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature);
-        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        if (!this.nexoFeature.isDisabled()) {
+            getLogger().info("Nexo interop enabled!");
+        }
+
         registerRenderers();
+        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature);
         this.gui = new RecipeGUI(this.renderers, this.registry, this, this.getServer());
+
+        registerEvents();
         registerCommands();
+
+        // IO
         createDataFolder();
-        saveDummyData1();
-        saveDummyData2();
+        saveDummyData();
         reloadRegistry();
+        getLogger().info("RecipeViewer enabled");
+    }
+
+    private void registerEvents() {
+        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
     }
 
     public CompletableFuture<Void> reloadRegistry() {
@@ -140,14 +147,25 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         }
     }
 
-    private void saveDummyData1() {
+
+    private void saveDummyData() {
+        var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
+                Spliterator.NONNULL);
+        List<Recipe> recipes = StreamSupport.stream(spliterator, false)
+                .limit(100)
+                .toList();
+        saveDummyData1(recipes);
+        saveDummyData2(recipes);
+    }
+
+    private void saveDummyData1(@Nonnull List<Recipe> recipes) {
         File file = new File(getDataFolder(), "dummy-category1.yml");
         var loader = Serializers.yamlLoader(getServer())
                 .file(file)
                 .build();
         ConfigurationNode root = loader.createNode();
         try {
-            root.set(createDummy1());
+            root.set(createDummy1(recipes));
             loader.save(root);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -155,14 +173,14 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         }
     }
 
-    private void saveDummyData2() {
+    private void saveDummyData2(@Nonnull List<Recipe> recipes) {
         File file = new File(getDataFolder(), "dummy-category2.yml");
         var loader = Serializers.yamlLoader(getServer())
                 .file(file)
                 .build();
         ConfigurationNode root = loader.createNode();
         try {
-            root.set(createDummy2());
+            root.set(createDummy2(recipes));
             loader.save(root);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -170,12 +188,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         }
     }
 
-    private RecipeCategorySetting createDummy1() {
-        var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
-                Spliterator.NONNULL);
-        List<Recipe> recipes = StreamSupport.stream(spliterator, false)
-                .limit(100)
-                .toList();
+    private RecipeCategorySetting createDummy1(@Nonnull List<Recipe> recipes) {
         return new RecipeCategorySetting(
                 "dummy-category1",
                 Component.text("dummy-category", NamedTextColor.AQUA),
@@ -191,12 +204,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         );
     }
 
-    private RecipeCategorySetting createDummy2() {
-        var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
-                Spliterator.NONNULL);
-        List<Recipe> recipes = StreamSupport.stream(spliterator, false)
-                .limit(100)
-                .toList();
+    private RecipeCategorySetting createDummy2(@Nonnull List<Recipe> recipes) {
         return new RecipeCategorySetting(
                 "dummy-category2",
                 Component.text("dummy-category2", NamedTextColor.YELLOW),
@@ -208,39 +216,6 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                         new RecipeListSetting(recipes.subList(5, recipes.size()))
                 )
         );
-    }
-
-    private void registerDummy() {
-        RecipeList list = new RecipeList(getServer().getRecipesFor(ItemStack.of(Material.ACACIA_BUTTON)));
-        RecipeCategory subcategory1 = new RecipeCategory(
-                "subcategory1",
-                Component.text("subcategory1", NamedTextColor.WHITE),
-                new SimpleItemStack(Material.BARRIER,
-                        Component.text("subcategory1"),
-                        List.of()).asItemStack(),
-                List.of()
-        );
-        RecipeCategory subcategory2 = new RecipeCategory(
-                "subcategory2",
-                Component.text("subcategory2", NamedTextColor.WHITE),
-                new SimpleItemStack(Material.BARRIER,
-                        Component.text("subcategory2"),
-                        List.of()).asItemStack(),
-                List.of()
-        );
-        RecipeCategory defaultCategory = new RecipeCategory(
-                "default",
-                Component.text("default"),
-                new SimpleItemStack(Material.BARRIER,
-                        Component.text("default"),
-                        List.of()).asItemStack(),
-                List.of(new RecipeCategoryPointer("subcategory-1"),
-                        new RecipeCategoryPointer("subcategory-2"),
-                        list)
-        );
-        this.registry.registerCategory(subcategory1);
-        this.registry.registerCategory(subcategory2);
-        this.registry.registerCategory(defaultCategory);
     }
 
     private void registerRenderers() {
@@ -277,5 +252,6 @@ public final class RecipeViewerPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getLogger().info("RecipeViewer shutdown complete");
     }
 }
