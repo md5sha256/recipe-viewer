@@ -1,8 +1,10 @@
 package io.github.md5sha256.recipeviewer;
 
 import io.github.md5sha256.recipeviewer.command.CategoryViewCommand;
+import io.github.md5sha256.recipeviewer.command.CustomCommandBean;
 import io.github.md5sha256.recipeviewer.command.RecipeParser;
 import io.github.md5sha256.recipeviewer.command.RecipeViewCommand;
+import io.github.md5sha256.recipeviewer.command.ReloadCommand;
 import io.github.md5sha256.recipeviewer.config.NexoItemStack;
 import io.github.md5sha256.recipeviewer.config.RecipeCategoryName;
 import io.github.md5sha256.recipeviewer.config.RecipeCategorySetting;
@@ -42,6 +44,8 @@ import org.bukkit.inventory.StonecuttingRecipe;
 import org.bukkit.inventory.TransmuteRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.incendo.cloud.Command;
+import org.incendo.cloud.bean.CommandBean;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
@@ -58,6 +62,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -81,7 +86,8 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         reloadRegistry();
     }
 
-    public void reloadRegistry() {
+    public CompletableFuture<Void> reloadRegistry() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
         BukkitScheduler scheduler = getServer().getScheduler();
         scheduler.runTaskAsynchronously(this, () -> {
             Path categoriesDir = getDataPath().resolve("categories");
@@ -92,8 +98,12 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 ex.printStackTrace();
             }
 
-            scheduler.runTask(this, () -> this.registry.loadCategories(settings));
+            scheduler.runTask(this, () -> {
+                this.registry.loadCategories(settings);
+                future.complete(null);
+            });
         });
+        return future;
     }
 
     private Optional<RecipeCategorySetting> loadCategoryFromFile(@Nonnull Path path) {
@@ -253,28 +263,13 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .registerMapping(new TypeToken<RecipeParser<Source>>() {
                                  },
                         x -> x.toConstant(ArgumentTypes.namespacedKey()).cloudSuggestions());
-        manager.command(new RecipeViewCommand(getServer(), this.renderers))
-                .command(new CategoryViewCommand(this.registry, this.gui));
-    }
-
-    private void printRecipes() {
-        getLogger().info("Printing recipes...");
-        var iterator = getServer().recipeIterator();
-        int nexoRecipeCount = 0;
-        String key = "none";
-        while (iterator.hasNext()) {
-            Recipe recipe = iterator.next();
-            if (!(recipe instanceof Keyed keyed)) {
-                getLogger().info("Recipe is not keyed!");
-                continue;
-            }
-            if (!keyed.getKey().getNamespace().equals("minecraft")) {
-                nexoRecipeCount += 1;
-                key = keyed.getKey().toString();
-            }
-        }
-        getLogger().info("Found " + nexoRecipeCount + " Nexo recipes");
-        getLogger().info(key);
+        var rootCommand = manager.commandBuilder("recipeviewer", "rv").permission("recipeviewer.base");
+        List<CustomCommandBean<Source>> beans = List.of(
+                new RecipeViewCommand(getServer(), this.renderers),
+                new CategoryViewCommand(this.registry, this.gui),
+                new ReloadCommand(this)
+        );
+        beans.forEach(bean -> manager.command(bean.configure(rootCommand)));
     }
 
     @Override
