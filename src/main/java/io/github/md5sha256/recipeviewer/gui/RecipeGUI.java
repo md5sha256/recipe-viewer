@@ -76,34 +76,32 @@ public class RecipeGUI {
         mainPane.populateWithGuiItems(items);
 
 
-        MasonryPane footerMasonry = new MasonryPane(0, 5, 9, 1);
-        StaticPane footerPane = new StaticPane(0, 0, 9, 1, Pane.Priority.LOWEST);
+        StaticPane footerPane = new StaticPane(0, 5, 9, 1, Pane.Priority.LOWEST);
         ItemStack fillItem = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         fillItem.editMeta(meta -> meta.displayName(Component.empty()));
         footerPane.fillWith(fillItem, null, this.plugin);
 
-        PagingButtons pagingButtons = getPagingButtons(mainPane);
-
-        footerMasonry.addPane(footerPane);
-        footerMasonry.addPane(pagingButtons);
+        PagingButtons pagingButtons = getPagingButtons(5, mainPane);
 
         gui.addPane(mainPane);
-        gui.addPane(footerMasonry);
-
+        gui.addPane(footerPane);
+        gui.addPane(pagingButtons);
         gui.setOnGlobalClick(event -> event.setCancelled(true));
         return gui;
     }
 
-    private @NotNull PagingButtons getPagingButtons(PaginatedPane mainPane) {
-        PagingButtons pagingButtons = new PagingButtons(Slot.fromXY(3, 0),
+    private @NotNull PagingButtons getPagingButtons(int y, PaginatedPane mainPane) {
+        PagingButtons pagingButtons = new PagingButtons(Slot.fromXY(3, y),
                 3,
                 Pane.Priority.HIGH,
                 mainPane,
                 this.plugin);
+        Component nextPageComp = Component.text("Next Page").decoration(TextDecoration.ITALIC, false);
+        Component prevPageComp = Component.text("Prev Page").decoration(TextDecoration.ITALIC, false);
         ItemStack nextButton = ItemStack.of(Material.PAPER);
-        nextButton.editMeta(meta -> meta.displayName(Component.text("Next Page")));
+        nextButton.editMeta(meta -> meta.displayName(nextPageComp));
         ItemStack prevButton = ItemStack.of(Material.PAPER);
-        nextButton.editMeta(meta -> meta.displayName(Component.text("Previous Page")));
+        prevButton.editMeta(meta -> meta.displayName(prevPageComp));
         pagingButtons.setForwardButton(new GuiItem(nextButton, this.plugin));
         pagingButtons.setBackwardButton(new GuiItem(prevButton, this.plugin));
         return pagingButtons;

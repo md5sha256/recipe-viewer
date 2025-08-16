@@ -170,7 +170,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
                 Spliterator.NONNULL);
         List<Recipe> recipes = StreamSupport.stream(spliterator, false)
-                .limit(10)
+                .limit(100)
                 .toList();
         return new RecipeCategorySetting(
                 "dummy-category1",
@@ -179,9 +179,9 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                         Component.text("dummy-category1"),
                         List.of(Component.text("lore!"))),
                 List.of(
-                        new RecipeCategoryName("dummy-subcategory1"),
+                        new RecipeCategoryName("dummy-category1"),
                         new RecipeListSetting(recipes.subList(0, 5)),
-                        new RecipeCategoryName("dummy-subcategory2"),
+                        new RecipeCategoryName("dummy-category2"),
                         new RecipeListSetting(recipes.subList(5, recipes.size()))
                 )
         );
@@ -191,16 +191,16 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
                 Spliterator.NONNULL);
         List<Recipe> recipes = StreamSupport.stream(spliterator, false)
-                .limit(10)
+                .limit(100)
                 .toList();
         return new RecipeCategorySetting(
                 "dummy-category2",
                 Component.text("dummy-category2", NamedTextColor.YELLOW),
                 new NexoItemStack("nexo-item-id"),
                 List.of(
-                        new RecipeCategoryName("dummy-subcategory1"),
+                        new RecipeCategoryName("dummy-category1"),
                         new RecipeListSetting(recipes.subList(0, 5)),
-                        new RecipeCategoryName("dummy-subcategory2"),
+                        new RecipeCategoryName("dummy-category2"),
                         new RecipeListSetting(recipes.subList(5, recipes.size()))
                 )
         );
