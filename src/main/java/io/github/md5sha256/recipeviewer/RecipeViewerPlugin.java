@@ -96,6 +96,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
             }
 
             scheduler.runTask(this, () -> {
+                this.registry.clear();
                 this.registry.loadCategories(settings);
                 future.complete(null);
             });
