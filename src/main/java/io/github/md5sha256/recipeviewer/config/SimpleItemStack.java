@@ -1,9 +1,10 @@
-package io.github.md5sha256.recipeviewer.model;
+package io.github.md5sha256.recipeviewer.config;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
@@ -17,7 +18,7 @@ public record SimpleItemStack(
         @Setting @Required @Nonnull Material material,
         @Setting @Nullable Component displayName,
         @Setting @Nullable List<Component> lore
-) {
+) implements ItemStackConfig {
 
     public SimpleItemStack(@Nonnull Material material,
                            @Nullable Component displayName,
@@ -29,6 +30,11 @@ public record SimpleItemStack(
         } else {
             this.lore = null;
         }
+    }
+
+    @Override
+    public @NotNull ItemStackConfigType configType() {
+        return ItemStackConfigType.SIMPLE_ITEM;
     }
 
     @Nonnull

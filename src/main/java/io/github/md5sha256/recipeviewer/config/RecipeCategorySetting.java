@@ -11,6 +11,7 @@ import java.util.List;
 public record RecipeCategorySetting(
         @Nonnull @Setting("name") String name,
         @Nonnull @Setting("displayName") Component displayName,
+        @Nonnull @Setting("icon") ItemStackConfig icon,
         @Nonnull @Setting("elements") List<RecipeSetting> elements
 ) {
 }

@@ -10,5 +10,5 @@ public record RecipeCategory(
         @Nonnull String name,
         @Nonnull Component displayName,
         @Nonnull ItemStack icon,
-        @Nonnull List<RecipeElement> elements) implements RecipeElement {
+        @Nonnull List<RecipeElement> elements) {
 }

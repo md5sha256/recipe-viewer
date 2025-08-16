@@ -3,14 +3,15 @@ package io.github.md5sha256.recipeviewer.gui;
 import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import com.github.stefvanschie.inventoryframework.pane.MasonryPane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.PagingButtons;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
+import io.github.md5sha256.recipeviewer.CategoryRegistry;
 import io.github.md5sha256.recipeviewer.model.RecipeCategory;
+import io.github.md5sha256.recipeviewer.model.RecipeCategoryPointer;
 import io.github.md5sha256.recipeviewer.model.RecipeElement;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
 import io.github.md5sha256.recipeviewer.renderer.Renderers;
@@ -27,15 +28,21 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RecipeGUI {
 
     private final Renderers renderers;
+    private final CategoryRegistry registry;
     private final Plugin plugin;
     private final Server server;
 
-    public RecipeGUI(@Nonnull Renderers renderers, @Nonnull Plugin plugin, @Nonnull Server server) {
+    public RecipeGUI(@Nonnull Renderers renderers,
+                     @Nonnull CategoryRegistry registry,
+                     @Nonnull Plugin plugin,
+                     @Nonnull Server server) {
         this.renderers = renderers;
+        this.registry = registry;
         this.plugin = plugin;
         this.server = server;
     }
@@ -44,13 +51,19 @@ public class RecipeGUI {
         ChestGui gui = new ChestGui(6, ComponentHolder.of(category.displayName()), this.plugin);
         List<GuiItem> items = new ArrayList<>();
         for (RecipeElement element : category.elements()) {
-            if (element instanceof RecipeCategory subcategory) {
-                GuiItem item = createCategoryItem(subcategory);
+            if (element instanceof RecipeCategoryPointer(String categoryName)) {
+                Optional<RecipeCategory> optional = this.registry.getByName(categoryName);
+                if (optional.isEmpty()) {
+                    this.plugin.getLogger().warning("Missing category: " + categoryName);
+                    continue;
+                }
+                RecipeCategory recipeCategory = optional.get();
+                GuiItem item = createCategoryItem(recipeCategory);
                 item.setAction(event -> {
                     if (event.getClickedInventory() == null) {
                         return;
                     }
-                    ChestGui subcatGui = createGui(subcategory);
+                    ChestGui subcatGui = createGui(recipeCategory);
                     subcatGui.setParent(gui);
                     subcatGui.show(event.getWhoClicked());
                 });

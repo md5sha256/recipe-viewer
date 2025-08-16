@@ -20,6 +20,7 @@ public class Serializers {
                 .register(Component.class, ComponentSerializer.MINI_MESSAGE)
                 .register(Recipe.class, new RecipeSerializer(server))
                 .registerExact(RecipeSetting.class, new RecipeSettingSerializer())
+                .registerExact(ItemStackConfig.class, new ItemStackConfigSerializer())
                 .build();
     }
 
