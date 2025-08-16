@@ -2,7 +2,6 @@ package io.github.md5sha256.recipeviewer.renderer;
 
 import org.bukkit.Server;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.Recipe;
 

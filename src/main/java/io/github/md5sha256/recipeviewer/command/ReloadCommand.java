@@ -6,8 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
-import org.incendo.cloud.bean.CommandBean;
-import org.incendo.cloud.bean.CommandProperties;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.paper.util.sender.Source;
 
@@ -24,7 +22,9 @@ public class ReloadCommand extends CustomCommandBean<Source> {
 
     @Override
     public Command.@NonNull Builder<? extends Source> configure(Command.@NonNull Builder<Source> builder) {
-        return builder.permission("recipeviewer.reload")
+        return builder
+                .literal("reload")
+                .permission("recipeviewer.reload")
                 .handler(this::handleCommand);
     }
 
@@ -33,7 +33,8 @@ public class ReloadCommand extends CustomCommandBean<Source> {
         this.plugin.reloadRegistry().whenComplete((unused, ex) -> {
             if (ex != null) {
                 ex.printStackTrace();
-                audience.sendMessage(Component.text("RecipeViewer failed to reload", NamedTextColor.RED));
+                audience.sendMessage(Component.text("RecipeViewer failed to reload",
+                        NamedTextColor.RED));
             } else {
                 audience.sendMessage(Component.text("RecipeViewer reloaded", NamedTextColor.GREEN));
             }
