@@ -9,3 +9,16 @@ dependencies:
     Nexo:
       load: BEFORE
       required: false
+permissions:
+  recipeviewer.base:
+    description: "Permission to view the base /recipeviewer command"
+    default: op
+  recipeviewer.recipe:
+    description: "Permission to run /recipeviewer recipe"
+    default: op
+  recipeviewer.category:
+    description: "Permission to run /recipewviewer category"
+    default: op
+  recipeviewer.reload:
+    description: "Permission to run /recipewviewer reload"
+    default: op
