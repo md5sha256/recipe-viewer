@@ -67,12 +67,15 @@ import java.util.stream.StreamSupport;
 public final class RecipeViewerPlugin extends JavaPlugin {
 
     private final Renderers renderers = new Renderers();
-    private final CategoryRegistry registry = new CategoryRegistry(getLogger());
+    private CategoryRegistry registry;
+    private NexoFeature nexoFeature;
     private RecipeGUI gui;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
+        this.nexoFeature = new NexoFeature(getServer());
+        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature);
         getServer().getPluginManager().registerEvents(new InventoryListener(), this);
         registerRenderers();
         this.gui = new RecipeGUI(this.renderers, this.registry, this, this.getServer());
@@ -261,7 +264,8 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .registerMapping(new TypeToken<RecipeParser<Source>>() {
                                  },
                         x -> x.toConstant(ArgumentTypes.namespacedKey()).cloudSuggestions());
-        var rootCommand = manager.commandBuilder("recipeviewer", "rv").permission("recipeviewer.base");
+        var rootCommand = manager.commandBuilder("recipeviewer", "rv")
+                .permission("recipeviewer.base");
         List<CustomCommandBean<Source>> beans = List.of(
                 new RecipeViewCommand(getServer(), this.renderers),
                 new CategoryViewCommand(this.registry, this.gui),

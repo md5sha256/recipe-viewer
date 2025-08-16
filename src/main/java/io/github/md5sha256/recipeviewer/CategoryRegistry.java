@@ -1,7 +1,5 @@
 package io.github.md5sha256.recipeviewer;
 
-import com.nexomc.nexo.api.NexoItems;
-import com.nexomc.nexo.items.ItemBuilder;
 import io.github.md5sha256.recipeviewer.config.ItemStackConfig;
 import io.github.md5sha256.recipeviewer.config.NexoItemStack;
 import io.github.md5sha256.recipeviewer.config.RecipeCategoryName;
@@ -27,9 +25,11 @@ public class CategoryRegistry {
 
     private final Map<String, RecipeCategory> categories = new HashMap<>();
     private final Logger logger;
+    private final NexoFeature nexoFeature;
 
-    public CategoryRegistry(@Nonnull Logger logger) {
+    public CategoryRegistry(@Nonnull Logger logger, @Nonnull NexoFeature nexoFeature) {
         this.logger = logger;
+        this.nexoFeature = nexoFeature;
     }
 
     @Nonnull
@@ -70,18 +70,24 @@ public class CategoryRegistry {
         this.categories.putAll(categoryMap);
     }
 
-    private RecipeCategory parseCategory(@Nonnull ItemStack unknownIcon,
-                                         @Nonnull RecipeCategorySetting setting) {
+    private RecipeCategory parseCategory(
+            @Nonnull ItemStack unknownIcon,
+            @Nonnull RecipeCategorySetting setting
+    ) {
         ItemStackConfig icon = setting.icon();
         ItemStack iconStack;
         if (icon instanceof NexoItemStack(String itemId)) {
-            ItemBuilder builder = NexoItems.itemFromId(itemId);
-            if (builder == null) {
-                this.logger.warning("Unknown nexo item: " + itemId);
+            if (!this.nexoFeature.isDisabled()) {
+                this.logger.warning("Nexo is disabled! Item: " + itemId);
                 iconStack = unknownIcon;
             } else {
-                ItemStack finalIcon = builder.getFinalItemStack();
-                iconStack = finalIcon == null ? unknownIcon : finalIcon;
+                ItemStack finalIcon = this.nexoFeature.getItemFromId(this.logger, itemId);
+                if (finalIcon == null) {
+                    this.logger.warning("Unknown nexo item: " + itemId);
+                    iconStack = unknownIcon;
+                } else {
+                    iconStack = finalIcon;
+                }
             }
         } else if (icon instanceof SimpleItemStack simpleItemStack) {
             iconStack = simpleItemStack.asItemStack();
