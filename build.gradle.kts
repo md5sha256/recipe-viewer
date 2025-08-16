@@ -14,11 +14,14 @@ repositories {
         name = "papermc-repo"
         url = uri("https://repo.papermc.io/repository/maven-public/")
     }
+    maven("https://repo.nexomc.com/releases")
 }
 
 dependencies {
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
+    compileOnly("com.nexomc:nexo:1.10.0")
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))

@@ -1,6 +1,7 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
 import org.bukkit.Server;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.Recipe;
@@ -23,7 +24,7 @@ public class Renderers {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean tryRenderRecipe(@Nonnull Server server,
-                                   @Nonnull Player player,
+                                   @Nonnull HumanEntity player,
                                    @Nonnull Recipe recipe) {
         for (RenderMeta meta : renderers) {
             if (meta.recipeClass().isInstance(recipe)) {
