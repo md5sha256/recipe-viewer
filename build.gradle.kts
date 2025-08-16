@@ -1,7 +1,6 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.18"
     id("com.gradleup.shadow") version "9.0.1"
 }
 
@@ -18,9 +17,10 @@ repositories {
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
+    implementation("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("com.nexomc:nexo:1.10.0")
 }
 

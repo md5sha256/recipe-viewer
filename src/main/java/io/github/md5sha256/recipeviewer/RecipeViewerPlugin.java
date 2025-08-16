@@ -3,6 +3,10 @@ package io.github.md5sha256.recipeviewer;
 import io.github.md5sha256.recipeviewer.command.CategoryViewCommand;
 import io.github.md5sha256.recipeviewer.command.RecipeParser;
 import io.github.md5sha256.recipeviewer.command.RecipeViewCommand;
+import io.github.md5sha256.recipeviewer.config.RecipeCategoryName;
+import io.github.md5sha256.recipeviewer.config.RecipeCategorySetting;
+import io.github.md5sha256.recipeviewer.config.RecipeListSetting;
+import io.github.md5sha256.recipeviewer.config.Serializers;
 import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
 import io.github.md5sha256.recipeviewer.model.RecipeCategory;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
@@ -39,8 +43,15 @@ import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
 import org.incendo.cloud.paper.util.sender.Source;
+import org.spongepowered.configurate.ConfigurationNode;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 
 public final class RecipeViewerPlugin extends JavaPlugin {
@@ -56,7 +67,52 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         registerRenderers();
         this.gui = new RecipeGUI(this.renderers, this, this.getServer());
         registerCommands();
-        registerDummy();
+        createDataFolder();
+        saveDummyData();
+    }
+
+    private void createDataFolder() {
+        try {
+            if (!Files.exists(getDataPath())) {
+                Files.createDirectory(getDataPath());
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            getLogger().warning("Failed to create data folder!");
+        }
+    }
+
+    private void saveDummyData() {
+        File file = new File(getDataFolder(), "dummy-recipes.yml");
+        var loader = Serializers.yamlLoader(getServer())
+                .file(file)
+                .build();
+        ConfigurationNode root = loader.createNode();
+        try {
+            root.set(createDummy());
+            loader.save(root);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            getLogger().warning("Failed to save dummy data!");
+        }
+    }
+
+    private RecipeCategorySetting createDummy() {
+        var spliterator = Spliterators.spliteratorUnknownSize(getServer().recipeIterator(),
+                Spliterator.NONNULL);
+        List<Recipe> recipes = StreamSupport.stream(spliterator, false)
+                .limit(10)
+                .toList();
+        return new RecipeCategorySetting(
+                "dummy",
+                Component.text("dummy-category", NamedTextColor.AQUA),
+                List.of(
+                        new RecipeCategoryName("dummy-category2"),
+                        new RecipeListSetting(recipes.subList(0, 5)),
+                        new RecipeCategoryName("dummy-category3"),
+                        new RecipeListSetting(recipes.subList(5, recipes.size()))
+                )
+        );
     }
 
     private void registerDummy() {
@@ -64,19 +120,25 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         RecipeCategory subcategory1 = new RecipeCategory(
                 "subcategory1",
                 Component.text("subcategory1", NamedTextColor.WHITE),
-                new SimpleItemStack(Material.BARRIER, Component.text("subcategory1"), List.of()).asItemStack(),
+                new SimpleItemStack(Material.BARRIER,
+                        Component.text("subcategory1"),
+                        List.of()).asItemStack(),
                 List.of()
         );
         RecipeCategory subcategory2 = new RecipeCategory(
                 "subcategory2",
                 Component.text("subcategory2", NamedTextColor.WHITE),
-                new SimpleItemStack(Material.BARRIER, Component.text("subcategory2"), List.of()).asItemStack(),
+                new SimpleItemStack(Material.BARRIER,
+                        Component.text("subcategory2"),
+                        List.of()).asItemStack(),
                 List.of()
         );
         RecipeCategory defaultCategory = new RecipeCategory(
                 "default",
                 Component.text("default"),
-                new SimpleItemStack(Material.BARRIER, Component.text("default"), List.of()).asItemStack(),
+                new SimpleItemStack(Material.BARRIER,
+                        Component.text("default"),
+                        List.of()).asItemStack(),
                 List.of(subcategory1, subcategory2, list)
         );
         this.registry.registerCategory(subcategory1);
