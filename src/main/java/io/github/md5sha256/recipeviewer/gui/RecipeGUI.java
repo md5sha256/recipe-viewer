@@ -20,12 +20,14 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +50,10 @@ public class RecipeGUI {
     }
 
     public ChestGui createGui(@Nonnull RecipeCategory category) {
+        return createGui(category, null);
+    }
+
+    public ChestGui createGui(@Nonnull RecipeCategory category, @Nullable Gui parent) {
         ChestGui gui = new ChestGui(6, ComponentHolder.of(category.displayName()), this.plugin);
         List<GuiItem> items = new ArrayList<>();
         for (RecipeElement element : category.elements()) {
@@ -60,7 +66,7 @@ public class RecipeGUI {
                 RecipeCategory recipeCategory = optional.get();
                 GuiItem item = createCategoryItem(recipeCategory);
                 item.setAction(event -> {
-                    ChestGui subcatGui = createGui(recipeCategory);
+                    ChestGui subcatGui = createGui(recipeCategory, gui);
                     subcatGui.show(event.getWhoClicked());
                 });
                 items.add(item);
@@ -72,7 +78,7 @@ public class RecipeGUI {
         mainPane.populateWithGuiItems(items);
 
 
-        StaticPane footerPane = getFooterPane();
+        StaticPane footerPane = getFooterPane(parent);
 
         ItemStack fillItem = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         fillItem.editMeta(meta -> meta.displayName(Component.empty()));
@@ -80,16 +86,26 @@ public class RecipeGUI {
 
         PagingButtons pagingButtons = getPagingButtons(5, mainPane);
 
-
-
         gui.addPane(mainPane);
         gui.addPane(footerPane);
         gui.addPane(pagingButtons);
         gui.setOnGlobalClick(event -> event.setCancelled(true));
+        if (parent != null) {
+            gui.setOnClose(event -> {
+                // Don't force-open the parent gui if the reason is OPEN_NEW
+                if (event.getReason() == InventoryCloseEvent.Reason.OPEN_NEW) {
+                    return;
+                }
+                // Delay opening the ui 1 tick later otherwise all IF listeners will break
+                this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> {
+                    parent.show(event.getPlayer());
+                }, 1);
+            });
+        }
         return gui;
     }
 
-    private @NotNull StaticPane getFooterPane() {
+    private @NotNull StaticPane getFooterPane(@Nullable Gui parent) {
         StaticPane footerPane = new StaticPane(0, 5, 9, 1, Pane.Priority.LOWEST);
         ItemStack backItem = ItemStack.of(Material.ARROW);
         backItem.editMeta(meta -> {
@@ -99,6 +115,9 @@ public class RecipeGUI {
         });
         GuiItem backButton = new GuiItem(backItem, event -> {
             event.getView().close();
+            if (parent != null) {
+                parent.show(event.getWhoClicked());
+            }
         }, this.plugin);
         footerPane.addItem(backButton, 4, 0);
         return footerPane;
@@ -138,7 +157,6 @@ public class RecipeGUI {
     private GuiItem createRecipeItem(@Nonnull Recipe recipe) {
         ItemStack icon = recipe.getResult().asOne();
         return new GuiItem(icon, event -> {
-            event.getView().close();
             if (!this.renderers.tryRenderRecipe(this.server, event.getWhoClicked(), recipe)) {
                 Component msg = Component.text("Recipe type not supported: " + recipe.getClass(),
                         NamedTextColor.RED);
