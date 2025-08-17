@@ -85,7 +85,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         // IO
         createDataFolder();
         saveDummyData();
-        reloadRegistry();
+        getServer().getScheduler().runTaskLater(this, this::reloadRegistry, 2);
         getLogger().info("RecipeViewer enabled");
     }
 

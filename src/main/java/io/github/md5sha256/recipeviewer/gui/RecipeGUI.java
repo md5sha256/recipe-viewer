@@ -3,6 +3,7 @@ package io.github.md5sha256.recipeviewer.gui;
 import com.github.stefvanschie.inventoryframework.adventuresupport.ComponentHolder;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
@@ -59,11 +60,7 @@ public class RecipeGUI {
                 RecipeCategory recipeCategory = optional.get();
                 GuiItem item = createCategoryItem(recipeCategory);
                 item.setAction(event -> {
-                    if (event.getClickedInventory() == null) {
-                        return;
-                    }
                     ChestGui subcatGui = createGui(recipeCategory);
-                    subcatGui.setParent(gui);
                     subcatGui.show(event.getWhoClicked());
                 });
                 items.add(item);
@@ -95,8 +92,10 @@ public class RecipeGUI {
                 Pane.Priority.HIGH,
                 mainPane,
                 this.plugin);
-        Component nextPageComp = Component.text("Next Page").decoration(TextDecoration.ITALIC, false);
-        Component prevPageComp = Component.text("Prev Page").decoration(TextDecoration.ITALIC, false);
+        Component nextPageComp = Component.text("Next Page")
+                .decoration(TextDecoration.ITALIC, false);
+        Component prevPageComp = Component.text("Prev Page")
+                .decoration(TextDecoration.ITALIC, false);
         ItemStack nextButton = ItemStack.of(Material.PAPER);
         nextButton.editMeta(meta -> meta.displayName(nextPageComp));
         ItemStack prevButton = ItemStack.of(Material.PAPER);
