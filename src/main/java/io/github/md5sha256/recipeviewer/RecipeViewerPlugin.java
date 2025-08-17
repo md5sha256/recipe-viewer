@@ -119,7 +119,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
             if (!Files.isRegularFile(path)) {
                 return Optional.empty();
             }
-            ConfigurationNode node = Serializers.yamlLoader(getServer())
+            ConfigurationNode node = Serializers.yamlLoader(getServer(), getLogger())
                     .file(path.toFile())
                     .build()
                     .load();
@@ -160,7 +160,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
 
     private void saveDummyData1(@Nonnull List<Recipe> recipes) {
         File file = new File(getDataFolder(), "dummy-category1.yml");
-        var loader = Serializers.yamlLoader(getServer())
+        var loader = Serializers.yamlLoader(getServer(), getLogger())
                 .file(file)
                 .build();
         ConfigurationNode root = loader.createNode();
@@ -175,7 +175,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
 
     private void saveDummyData2(@Nonnull List<Recipe> recipes) {
         File file = new File(getDataFolder(), "dummy-category2.yml");
-        var loader = Serializers.yamlLoader(getServer())
+        var loader = Serializers.yamlLoader(getServer(), getLogger())
                 .file(file)
                 .build();
         ConfigurationNode root = loader.createNode();

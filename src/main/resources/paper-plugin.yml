@@ -9,6 +9,7 @@ dependencies:
     Nexo:
       load: BEFORE
       required: false
+      join-classpath: true
 permissions:
   recipeviewer.base:
     description: "Permission to view the base /recipeviewer command"

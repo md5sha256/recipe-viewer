@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -39,7 +40,7 @@ public class CategoryRegistry {
         } else if (setting instanceof RecipeListSetting(
                 List<org.bukkit.inventory.Recipe> recipes
         )) {
-            return new RecipeList(recipes);
+            return new RecipeList(recipes.stream().filter(Objects::nonNull).toList());
         }
         throw new IllegalArgumentException("Unsupported recipe setting: " + setting.settingType());
     }
@@ -77,11 +78,11 @@ public class CategoryRegistry {
         ItemStackConfig icon = setting.icon();
         ItemStack iconStack;
         if (icon instanceof NexoItemStack(String itemId)) {
-            if (!this.nexoFeature.isDisabled()) {
+            if (this.nexoFeature.isDisabled()) {
                 this.logger.warning("Nexo is disabled! Item: " + itemId);
                 iconStack = unknownIcon;
             } else {
-                ItemStack finalIcon = this.nexoFeature.getItemFromId(this.logger, itemId);
+                ItemStack finalIcon = this.nexoFeature.getItemFromId(itemId);
                 if (finalIcon == null) {
                     this.logger.warning("Unknown nexo item: " + itemId);
                     iconStack = unknownIcon;

@@ -10,14 +10,17 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 public class RecipeSerializer extends ScalarSerializer<Recipe> {
 
     private final Server server;
+    private final Logger logger;
 
-    public RecipeSerializer(@Nonnull Server server) {
+    public RecipeSerializer(@Nonnull Server server, @Nonnull Logger logger) {
         super(Recipe.class);
         this.server = server;
+        this.logger = logger;
     }
 
     @Override
@@ -32,7 +35,8 @@ public class RecipeSerializer extends ScalarSerializer<Recipe> {
         }
         Recipe recipe = this.server.getRecipe(key);
         if (recipe == null) {
-            throw new SerializationException("Unknown recipe: " + str);
+            this.logger.warning("Unknown recipe: " + str);
+            return null;
         }
         return recipe;
 
