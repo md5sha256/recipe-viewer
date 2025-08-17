@@ -72,18 +72,36 @@ public class RecipeGUI {
         mainPane.populateWithGuiItems(items);
 
 
-        StaticPane footerPane = new StaticPane(0, 5, 9, 1, Pane.Priority.LOWEST);
+        StaticPane footerPane = getFooterPane();
+
         ItemStack fillItem = ItemStack.of(Material.GRAY_STAINED_GLASS_PANE);
         fillItem.editMeta(meta -> meta.displayName(Component.empty()));
         footerPane.fillWith(fillItem, null, this.plugin);
 
         PagingButtons pagingButtons = getPagingButtons(5, mainPane);
 
+
+
         gui.addPane(mainPane);
         gui.addPane(footerPane);
         gui.addPane(pagingButtons);
         gui.setOnGlobalClick(event -> event.setCancelled(true));
         return gui;
+    }
+
+    private @NotNull StaticPane getFooterPane() {
+        StaticPane footerPane = new StaticPane(0, 5, 9, 1, Pane.Priority.LOWEST);
+        ItemStack backItem = ItemStack.of(Material.ARROW);
+        backItem.editMeta(meta -> {
+            Component displayName = Component.text("Back", NamedTextColor.RED)
+                    .decoration(TextDecoration.ITALIC, false);
+            meta.displayName(displayName);
+        });
+        GuiItem backButton = new GuiItem(backItem, event -> {
+            event.getView().close();
+        }, this.plugin);
+        footerPane.addItem(backButton, 4, 0);
+        return footerPane;
     }
 
     private @NotNull PagingButtons getPagingButtons(int y, PaginatedPane mainPane) {
