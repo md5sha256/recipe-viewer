@@ -41,4 +41,12 @@ tasks {
         // Your plugin"s jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21.4")
     }
+    shadowJar {
+        val base = "io.github.md5sha256.recipeviewer.libraries"
+        relocate("org.incendo", "${base}.org.incendo")
+        relocate("com.github.stefvanschie", "${base}.com.github.stefvanschie")
+        relocate("org.spongepowered.configurate", "${base}.org.spongepowered.configurate")
+        relocate("org.yaml.snakeyaml", "${base}.org.yaml.snakeyaml")
+        relocate("io.leangen.geantyref", "${base}.io.leangen.geantyref")
+    }
 }
