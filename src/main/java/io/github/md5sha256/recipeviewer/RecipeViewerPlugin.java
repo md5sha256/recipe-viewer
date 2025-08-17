@@ -42,6 +42,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
+import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -243,10 +244,14 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .permission("recipeviewer.base");
         List<CustomCommandBean<Source>> beans = List.of(
                 new RecipeViewCommand(getServer(), this.renderers),
-                new CategoryViewCommand(this.registry, this.gui),
                 new ReloadCommand(this)
         );
         beans.forEach(bean -> manager.command(bean.configure(rootCommand)));
+        var categoryViewCommand = new CategoryViewCommand(this.registry, this.gui).configure(rootCommand).build();
+        var recipesCommand = manager.commandBuilder("recipes")
+                .proxies(categoryViewCommand)
+                .build();
+        manager.command(recipesCommand);
     }
 
     @Override
