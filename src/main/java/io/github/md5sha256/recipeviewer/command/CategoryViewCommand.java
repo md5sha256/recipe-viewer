@@ -5,6 +5,7 @@ import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
 import io.github.md5sha256.recipeviewer.model.RecipeCategory;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.Command;
+import org.incendo.cloud.component.DefaultValue;
 import org.incendo.cloud.context.CommandContext;
 import org.incendo.cloud.key.CloudKey;
 import org.incendo.cloud.paper.util.sender.PlayerSource;
@@ -31,7 +32,7 @@ public class CategoryViewCommand extends CustomCommandBean<Source> {
                 .literal("category")
                 .permission("recipeviewer.category")
                 .senderType(PlayerSource.class)
-                .required(KEY_CATEGORY, CategoryParser.categoryParser(this.registry))
+                .optional(KEY_CATEGORY, CategoryParser.categoryParser(this.registry), DefaultValue.parsed("default"))
                 .handler(this::handleCommand);
     }
 
