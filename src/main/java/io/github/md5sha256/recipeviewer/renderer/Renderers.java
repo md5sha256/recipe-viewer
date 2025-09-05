@@ -13,7 +13,7 @@ public class Renderers {
 
     private final List<RenderMeta> renderers = new ArrayList<>();
 
-    public <T extends Recipe> Renderers registerRenderer(
+    public <T> Renderers registerRenderer(
             @Nonnull Class<T> recipeClass,
             @Nonnull RecipeRenderer<T> renderer
     ) {
@@ -24,7 +24,7 @@ public class Renderers {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean tryRenderRecipe(@Nonnull Server server,
                                    @Nonnull HumanEntity player,
-                                   @Nonnull Recipe recipe) {
+                                   @Nonnull Object recipe) {
         for (RenderMeta meta : renderers) {
             if (meta.recipeClass().isInstance(recipe)) {
                 RecipeRenderer erasedRenderer = meta.renderer();

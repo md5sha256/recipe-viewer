@@ -6,7 +6,7 @@ import org.bukkit.inventory.Recipe;
 
 import javax.annotation.Nonnull;
 
-public interface RecipeRenderer<T extends Recipe> {
+public interface RecipeRenderer<T> {
 
     @Nonnull
     InventoryHolder renderRecipe(@Nonnull Server server, @Nonnull T recipe);
