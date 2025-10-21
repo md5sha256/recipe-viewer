@@ -12,7 +12,9 @@ import io.github.md5sha256.recipeviewer.config.RecipeListSetting;
 import io.github.md5sha256.recipeviewer.config.Serializers;
 import io.github.md5sha256.recipeviewer.config.SimpleItemStack;
 import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
+import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
 import io.github.md5sha256.recipeviewer.renderer.BlastingRecipeRenderer;
+import io.github.md5sha256.recipeviewer.renderer.BrewingRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.FurnaceRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.Renderers;
 import io.github.md5sha256.recipeviewer.renderer.ShapedRecipeRenderer;
@@ -42,7 +44,6 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.paper.PaperCommandManager;
 import org.incendo.cloud.paper.util.sender.PaperSimpleSenderMapper;
-import org.incendo.cloud.paper.util.sender.PlayerSource;
 import org.incendo.cloud.paper.util.sender.Source;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -229,7 +230,8 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                         new SmithingTransformRecipeRenderer())
                 .registerRenderer(SmokingRecipe.class, new SmokingRecipeRenderer())
                 .registerRenderer(StonecuttingRecipe.class, new StonecuttingRecipeRenderer())
-                .registerRenderer(TransmuteRecipe.class, new TransmuteRecipeRenderer());
+                .registerRenderer(TransmuteRecipe.class, new TransmuteRecipeRenderer())
+                .registerRenderer(CustomBrewingRecipe.class, new BrewingRecipeRenderer());
     }
 
     private void registerCommands() {
