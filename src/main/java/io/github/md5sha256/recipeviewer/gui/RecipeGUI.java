@@ -49,14 +49,10 @@ public class RecipeGUI {
         this.server = server;
     }
 
-    public ChestGui createGui(@Nonnull RecipeCategory category) {
-        return createGui(category, null);
-    }
-
-    public ChestGui createGui(@Nonnull RecipeCategory category, @Nullable Gui parent) {
-        ChestGui gui = new ChestGui(6, ComponentHolder.of(category.displayName()), this.plugin);
+    public ChestGui createGui(@Nonnull Component title, @Nonnull List<? extends RecipeElement> recipeElements, @Nullable Gui parent) {
+        ChestGui gui = new ChestGui(6, ComponentHolder.of(title), this.plugin);
         List<GuiItem> items = new ArrayList<>();
-        for (RecipeElement element : category.elements()) {
+        for (RecipeElement element : recipeElements) {
             if (element instanceof RecipeCategoryPointer(String categoryName)) {
                 Optional<RecipeCategory> optional = this.registry.getByName(categoryName);
                 if (optional.isEmpty()) {
@@ -103,6 +99,14 @@ public class RecipeGUI {
             });
         }
         return gui;
+    }
+
+    public ChestGui createGui(@Nonnull RecipeCategory category) {
+        return createGui(category, null);
+    }
+
+    public ChestGui createGui(@Nonnull RecipeCategory category, @Nullable Gui parent) {
+        return createGui(category.displayName(), category.elements(), parent);
     }
 
     private @NotNull StaticPane getFooterPane(@Nullable Gui parent) {

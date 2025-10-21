@@ -3,6 +3,7 @@ package io.github.md5sha256.recipeviewer;
 import io.github.md5sha256.recipeviewer.command.CategoryViewCommand;
 import io.github.md5sha256.recipeviewer.command.CustomCommandBean;
 import io.github.md5sha256.recipeviewer.command.RecipeParser;
+import io.github.md5sha256.recipeviewer.command.RecipeSearchCommand;
 import io.github.md5sha256.recipeviewer.command.RecipeViewCommand;
 import io.github.md5sha256.recipeviewer.command.ReloadCommand;
 import io.github.md5sha256.recipeviewer.config.NexoItemStack;
@@ -246,7 +247,8 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .permission("recipeviewer.base");
         List<CustomCommandBean<Source>> beans = List.of(
                 new RecipeViewCommand(getServer(), this.renderers),
-                new ReloadCommand(this)
+                new ReloadCommand(this),
+                new RecipeSearchCommand(this.getServer(), this.gui)
         );
         beans.forEach(bean -> manager.command(bean.configure(rootCommand)));
         var categoryViewCommand = new CategoryViewCommand(this.registry, this.gui).configure(rootCommand).build();
