@@ -17,6 +17,9 @@ permissions:
   recipeviewer.recipe:
     description: "Permission to run /recipeviewer recipe"
     default: op
+  recipeviewer.recipesearch:
+    description: "Permission to run /recipewviewer recipesearch"
+    default: op
   recipeviewer.category:
     description: "Permission to run /recipewviewer category"
     default: op
