@@ -51,7 +51,7 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
         Iterator<Recipe> iterator = this.server.recipeIterator();
         while (iterator.hasNext()) {
             Recipe recipe = iterator.next();
-            if (!(recipe instanceof Keyed keyed && keyed.getKey().value().startsWith(target))) {
+            if (recipe instanceof Keyed keyed && keyed.getKey().value().contains(target)) {
                 recipes.add(recipe);
             }
         }
@@ -65,7 +65,7 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
         List<Recipe> recipes;
         if (context.contains(KEY_RECIPE)) {
             String searchTerm = context.get(KEY_RECIPE);
-            title = Component.text("Results for: '" + searchTerm + "'");
+            title = Component.text("Results for: " + searchTerm);
             recipes = findRecipes(searchTerm);
         } else {
             ItemStack item = player.getInventory().getItemInMainHand();
@@ -76,7 +76,7 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
                 return;
             }
             Component itemName = this.server.getItemFactory().displayName(item);
-            title = Component.text("Recipes for: '").append(itemName).append(Component.text("'"));
+            title = Component.text("Recipes for: ").append(itemName);
             recipes = this.server.getRecipesFor(item);
         }
         if (recipes.isEmpty()) {
