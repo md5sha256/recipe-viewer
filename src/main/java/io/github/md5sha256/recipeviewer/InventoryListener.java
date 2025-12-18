@@ -9,6 +9,8 @@ import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -18,9 +20,16 @@ public class InventoryListener implements Listener {
         return inventory != null && inventory.getHolder() instanceof RecipeView;
     }
 
+    private boolean shouldCancel(@NotNull InventoryView view) {
+        return shouldCancel(view.getTopInventory()) || shouldCancel(view.getBottomInventory());
+    }
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (shouldCancel(event.getClickedInventory())) {
+        // Need to check the view because IF does not trigger the global
+        // click listener if the clicked inventory is not a Gui
+        // even if ANY inventory in the view is a Gui
+        if (shouldCancel(event.getView())) {
             event.setCancelled(true);
         }
     }
@@ -34,14 +43,14 @@ public class InventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (shouldCancel(event.getInventory())) {
+        if (shouldCancel(event.getView())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onInventoryCreative(InventoryCreativeEvent event) {
-        if (shouldCancel(event.getInventory())) {
+        if (shouldCancel(event.getView())) {
             event.setCancelled(true);
         }
     }

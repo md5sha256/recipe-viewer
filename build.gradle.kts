@@ -19,7 +19,7 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
-    implementation("com.github.stefvanschie.inventoryframework:IF:0.11.3")
+    implementation("com.github.stefvanschie.inventoryframework:IF:0.11.5")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("com.nexomc:nexo:1.10.0")
 }
