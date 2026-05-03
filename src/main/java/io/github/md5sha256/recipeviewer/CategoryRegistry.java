@@ -16,8 +16,8 @@ import io.github.md5sha256.recipeviewer.model.RecipeCategoryPointer;
 import io.github.md5sha256.recipeviewer.model.RecipeElement;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
 import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
@@ -34,10 +34,16 @@ public class CategoryRegistry {
     private final Map<String, RecipeCategory> categories = new HashMap<>();
     private final Logger logger;
     private final NexoFeature nexoFeature;
+    private final Server server;
 
-    public CategoryRegistry(@Nonnull Logger logger, @Nonnull NexoFeature nexoFeature) {
+    public CategoryRegistry(
+            @Nonnull Logger logger,
+            @Nonnull NexoFeature nexoFeature,
+            @Nonnull Server server
+    ) {
         this.logger = logger;
         this.nexoFeature = nexoFeature;
+        this.server = server;
     }
 
     @Nonnull
@@ -115,7 +121,7 @@ public class CategoryRegistry {
         }
         if (config instanceof MinecraftItem(String input)) {
             try {
-                return Bukkit.getItemFactory().createItemStack(input);
+                return this.server.getItemFactory().createItemStack(input);
             } catch (IllegalArgumentException ex) {
                 this.logger.warning("Invalid minecraft item string: " + input + " — " + ex.getMessage());
                 return unknownIcon;
@@ -153,7 +159,7 @@ public class CategoryRegistry {
                         inputs,
                         ingredient,
                         outputs,
-                        config.consumeIngredientValue()));
+                        config.consumeIngredient()));
             } catch (IllegalArgumentException ex) {
                 this.logger.warning("Skipping brewing recipe: " + ex.getMessage());
             }

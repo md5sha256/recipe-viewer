@@ -1,6 +1,7 @@
 package io.github.md5sha256.recipeviewer.config;
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import javax.annotation.Nonnull;
@@ -9,18 +10,14 @@ import java.util.List;
 
 @ConfigSerializable
 public record BrewingRecipeConfig(
-        @Nonnull @Setting("inputs") List<ItemStackConfig> inputs,
+        @Setting("inputs") @Required @Nonnull List<ItemStackConfig> inputs,
         @Nullable @Setting("ingredient") ItemStackConfig ingredient,
-        @Nonnull @Setting("outputs") List<ItemStackConfig> outputs,
-        @Nullable @Setting("consume-ingredient") Boolean consumeIngredient
+        @Setting("outputs") @Required @Nonnull List<ItemStackConfig> outputs,
+        @Setting("consume-ingredient") @Required boolean consumeIngredient
 ) {
 
     public BrewingRecipeConfig {
         inputs = inputs == null ? List.of() : List.copyOf(inputs);
         outputs = outputs == null ? List.of() : List.copyOf(outputs);
-    }
-
-    public boolean consumeIngredientValue() {
-        return !Boolean.FALSE.equals(this.consumeIngredient);
     }
 }

@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 
 @ConfigSerializable
 public record MinecraftItem(
-        @Nonnull @Setting @Required String input
+        @Setting @Required @Nonnull String input
 ) implements ItemStackConfig {
 
     @Override

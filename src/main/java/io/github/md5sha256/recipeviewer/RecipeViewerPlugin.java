@@ -79,7 +79,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         }
 
         registerRenderers();
-        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature);
+        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature, getServer());
         this.gui = new RecipeGUI(this.renderers, this.registry, this, this.getServer());
 
         registerEvents();
