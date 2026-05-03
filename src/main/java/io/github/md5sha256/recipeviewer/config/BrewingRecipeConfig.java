@@ -1,11 +1,13 @@
 package io.github.md5sha256.recipeviewer.config;
 
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+@ConfigSerializable
 public record BrewingRecipeConfig(
         @Nonnull @Setting("inputs") List<ItemStackConfig> inputs,
         @Nullable @Setting("ingredient") ItemStackConfig ingredient,

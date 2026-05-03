@@ -23,8 +23,6 @@ public class Serializers {
                 .register(Recipe.class, new RecipeSerializer(server, logger))
                 .registerExact(RecipeSetting.class, new RecipeSettingSerializer())
                 .registerExact(ItemStackConfig.class, new ItemStackConfigSerializer())
-                .register(BrewingRecipeConfig.class, new BrewingRecipeConfigSerializer())
-                .register(BrewingRecipeListSetting.class, new BrewingRecipeListSettingSerializer())
                 .build();
     }
 

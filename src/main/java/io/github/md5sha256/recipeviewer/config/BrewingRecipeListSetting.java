@@ -1,12 +1,15 @@
 package io.github.md5sha256.recipeviewer.config;
 
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
+@ConfigSerializable
 public record BrewingRecipeListSetting(
-        @Nonnull List<BrewingRecipeConfig> brewingRecipes
+        @Nonnull @Setting("brewing-recipes") List<BrewingRecipeConfig> brewingRecipes
 ) implements RecipeSetting {
 
     public BrewingRecipeListSetting {
