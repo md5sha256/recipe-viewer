@@ -17,7 +17,7 @@ public record BrewingRecipeConfig(
 ) {
 
     public BrewingRecipeConfig {
-        inputs = inputs == null ? List.of() : List.copyOf(inputs);
-        outputs = outputs == null ? List.of() : List.copyOf(outputs);
+        inputs = List.copyOf(inputs);
+        outputs = List.copyOf(outputs);
     }
 }

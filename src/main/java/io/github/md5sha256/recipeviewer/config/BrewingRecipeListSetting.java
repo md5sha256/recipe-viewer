@@ -14,7 +14,7 @@ public record BrewingRecipeListSetting(
 ) implements RecipeSetting {
 
     public BrewingRecipeListSetting {
-        brewingRecipes = brewingRecipes == null ? List.of() : List.copyOf(brewingRecipes);
+        brewingRecipes = List.copyOf(brewingRecipes);
     }
 
     @Override
