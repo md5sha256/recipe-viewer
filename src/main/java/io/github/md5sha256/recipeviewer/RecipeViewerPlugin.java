@@ -130,7 +130,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
             return Optional.ofNullable(node.get(RecipeCategorySetting.class));
         } catch (IOException ex) {
             ex.printStackTrace();
-            getLogger().warning("Failed to load recipe category from file: " + path.getFileName());
+            getLogger().warning("Failed to load recipe category from file: " + path.getFileName() + " — " + ex.getMessage());
         }
         return Optional.empty();
     }

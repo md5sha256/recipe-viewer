@@ -21,6 +21,8 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
             return node.get(SimpleItemStack.class);
         } else if (configType == ItemStackConfigType.NEXO_ITEM) {
             return node.get(NexoItemStack.class);
+        } else if (configType == ItemStackConfigType.MINECRAFT_ITEM) {
+            return node.get(MinecraftItem.class);
         } else {
             throw new SerializationException("Unsupported config type: " + configType);
         }
@@ -39,6 +41,8 @@ public class ItemStackConfigSerializer implements TypeSerializer<ItemStackConfig
             node.set(NexoItemStack.class, nexoItemStack);
         } else if (obj instanceof SimpleItemStack simpleItemStack) {
             node.set(SimpleItemStack.class, simpleItemStack);
+        } else if (obj instanceof MinecraftItem minecraftItem) {
+            node.set(MinecraftItem.class, minecraftItem);
         }
     }
 }
