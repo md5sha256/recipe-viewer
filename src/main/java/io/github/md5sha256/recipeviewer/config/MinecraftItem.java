@@ -8,12 +8,12 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 import javax.annotation.Nonnull;
 
 @ConfigSerializable
-public record RecipeCategoryName(
-        @Setting(value = "category-name") @Required @Nonnull String name
-) implements RecipeSetting {
+public record MinecraftItem(
+        @Setting @Required @Nonnull String input
+) implements ItemStackConfig {
 
     @Override
-    public @NotNull RecipeSettingType settingType() {
-        return RecipeSettingType.CATEGORY_NAME;
+    public @NotNull ItemStackConfigType configType() {
+        return ItemStackConfigType.MINECRAFT_ITEM;
     }
 }

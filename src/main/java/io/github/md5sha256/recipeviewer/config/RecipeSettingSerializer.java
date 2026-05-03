@@ -22,6 +22,8 @@ public class RecipeSettingSerializer implements TypeSerializer<RecipeSetting> {
             return node.get(RecipeListSetting.class);
         } else if (settingType == RecipeSettingType.CATEGORY_NAME) {
             return node.get(RecipeCategoryName.class);
+        } else if (settingType == RecipeSettingType.BREWING_RECIPE_LIST) {
+            return node.get(BrewingRecipeListSetting.class);
         } else {
             throw new SerializationException("Unknown setting type: " + settingType);
         }
@@ -41,6 +43,8 @@ public class RecipeSettingSerializer implements TypeSerializer<RecipeSetting> {
             node.set(RecipeCategoryName.class, catName);
         } else if (obj instanceof RecipeListSetting recipeList) {
             node.set(RecipeListSetting.class, recipeList);
+        } else if (obj instanceof BrewingRecipeListSetting brewingList) {
+            node.set(BrewingRecipeListSetting.class, brewingList);
         }
     }
 }

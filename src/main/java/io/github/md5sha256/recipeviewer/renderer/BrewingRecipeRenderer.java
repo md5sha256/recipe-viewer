@@ -22,16 +22,16 @@ public class BrewingRecipeRenderer implements RecipeRenderer<CustomBrewingRecipe
             List<ItemStack> outputs = recipe.outputs();
             ItemStack ingredient = recipe.ingredient();
             Inventory previous = server.createInventory(holder, InventoryType.BREWING);
-            for (int i = 0; i < inputs.size(); i++) {
-                previous.setItem(i, inputs.get(i));
+            for (int i = 0; i < 3; i++) {
+                previous.setItem(i, i < inputs.size() ? inputs.get(i) : ItemStack.empty());
             }
-            previous.setItem(3, ingredient);
+            previous.setItem(3, ingredient != null ? ingredient : ItemStack.empty());
             Inventory completed = server.createInventory(holder, InventoryType.BREWING);
             if (!recipe.consumeIngredient()) {
-                completed.setItem(3, ingredient);
+                completed.setItem(3, ingredient != null ? ingredient : ItemStack.empty());
             }
-            for (int i = 0; i < inputs.size(); i++) {
-                completed.setItem(i, outputs.get(i));
+            for (int i = 0; i < 3; i++) {
+                completed.setItem(i, i < outputs.size() ? outputs.get(i) : ItemStack.empty());
             }
             return previous;
         };

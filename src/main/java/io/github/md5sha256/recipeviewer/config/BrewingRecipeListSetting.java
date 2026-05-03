@@ -6,14 +6,19 @@ import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 @ConfigSerializable
-public record RecipeCategoryName(
-        @Setting(value = "category-name") @Required @Nonnull String name
+public record BrewingRecipeListSetting(
+        @Setting("brewing-recipes") @Required @Nonnull List<BrewingRecipeConfig> brewingRecipes
 ) implements RecipeSetting {
+
+    public BrewingRecipeListSetting {
+        brewingRecipes = List.copyOf(brewingRecipes);
+    }
 
     @Override
     public @NotNull RecipeSettingType settingType() {
-        return RecipeSettingType.CATEGORY_NAME;
+        return RecipeSettingType.BREWING_RECIPE_LIST;
     }
 }

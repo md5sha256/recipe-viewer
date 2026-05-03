@@ -79,7 +79,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         }
 
         registerRenderers();
-        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature);
+        this.registry = new CategoryRegistry(getLogger(), this.nexoFeature, getServer());
         this.gui = new RecipeGUI(this.renderers, this.registry, this, this.getServer());
 
         registerEvents();
@@ -130,7 +130,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
             return Optional.ofNullable(node.get(RecipeCategorySetting.class));
         } catch (IOException ex) {
             ex.printStackTrace();
-            getLogger().warning("Failed to load recipe category from file: " + path.getFileName());
+            getLogger().warning("Failed to load recipe category from file: " + path.getFileName() + " — " + ex.getMessage());
         }
         return Optional.empty();
     }
