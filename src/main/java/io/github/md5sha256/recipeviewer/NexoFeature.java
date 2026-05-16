@@ -38,9 +38,18 @@ public class NexoFeature {
         return this.reflectionInfo.getItemStack(id);
     }
 
-    @FunctionalInterface
+    @Nullable
+    public String getIdFromItem(@Nonnull ItemStack itemStack) {
+        if (this.reflectionInfo == null) {
+            return null;
+        }
+        return this.reflectionInfo.getIdFromItem(itemStack);
+    }
+
     private interface NexoItemProvider {
         @Nullable ItemStack getItemStack(@Nonnull String nexoId);
+
+        @Nullable String getIdFromItem(@Nonnull ItemStack itemStack);
     }
 
 
@@ -53,6 +62,11 @@ public class NexoFeature {
                 return null;
             }
             return builder.getFinalItemStack();
+        }
+
+        @Nullable
+        public String getIdFromItem(@Nonnull ItemStack itemStack) {
+            return com.nexomc.nexo.api.NexoItems.idFromItem(itemStack);
         }
 
     }

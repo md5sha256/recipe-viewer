@@ -248,7 +248,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         List<CustomCommandBean<Source>> beans = List.of(
                 new RecipeViewCommand(getServer(), this.renderers, this.gui),
                 new ReloadCommand(this),
-                new RecipeSearchCommand(this.getServer(), this.gui)
+                new RecipeSearchCommand(this.getServer(), this.gui, this.registry)
         );
         beans.forEach(bean -> manager.command(bean.configure(rootCommand)));
         var categoryViewCommand = new CategoryViewCommand(this.registry, this.gui).configure(rootCommand).build();
