@@ -1,11 +1,13 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
+import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
+import io.github.md5sha256.recipeviewer.util.RecipeView;
 import org.bukkit.Server;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.InventoryHolder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,15 +23,25 @@ public class Renderers {
         return this;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean tryRenderRecipe(@Nonnull Server server,
                                    @Nonnull HumanEntity player,
                                    @Nonnull Object recipe) {
+        return tryRenderRecipe(server, player, recipe, null);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public boolean tryRenderRecipe(@Nonnull Server server,
+                                   @Nonnull HumanEntity player,
+                                   @Nonnull Object recipe,
+                                   @Nullable Gui returnGui) {
         for (RenderMeta meta : renderers) {
             if (meta.recipeClass().isInstance(recipe)) {
                 RecipeRenderer erasedRenderer = meta.renderer();
-                Inventory inventory = erasedRenderer.renderRecipe(server, recipe).getInventory();
-                player.openInventory(inventory);
+                InventoryHolder holder = erasedRenderer.renderRecipe(server, recipe);
+                if (returnGui != null && holder instanceof RecipeView recipeView) {
+                    recipeView.setReturnGui(returnGui);
+                }
+                player.openInventory(holder.getInventory());
                 return true;
             }
         }

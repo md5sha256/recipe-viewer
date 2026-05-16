@@ -93,7 +93,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
     }
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvents(new InventoryListener(), this);
+        getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
     }
 
     public CompletableFuture<Void> reloadRegistry() {
