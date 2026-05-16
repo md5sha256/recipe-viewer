@@ -87,7 +87,7 @@ public class CategoryRegistry {
         for (RecipeCategory category : this.categories.values()) {
             collectBrewingRecipesMatching(category.elements(), lowerQuery, results, seen);
         }
-        return List.copyOf(results);
+        return results;
     }
 
     public @Nonnull List<CustomBrewingRecipe> findBrewingRecipes(@Nonnull ItemStack item) {
@@ -99,7 +99,7 @@ public class CategoryRegistry {
         for (RecipeCategory category : this.categories.values()) {
             collectBrewingRecipesForItem(category.elements(), item, results, seen);
         }
-        return List.copyOf(results);
+        return results;
     }
 
     private void collectBrewingRecipesMatching(
