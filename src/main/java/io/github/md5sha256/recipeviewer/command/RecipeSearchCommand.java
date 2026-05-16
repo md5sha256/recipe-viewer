@@ -1,8 +1,11 @@
 package io.github.md5sha256.recipeviewer.command;
 
+import io.github.md5sha256.recipeviewer.CategoryRegistry;
 import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
+import io.github.md5sha256.recipeviewer.model.BrewingRecipeList;
+import io.github.md5sha256.recipeviewer.model.RecipeElement;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
-import io.github.md5sha256.recipeviewer.renderer.Renderers;
+import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Keyed;
@@ -29,11 +32,14 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
 
     private final Server server;
     private final RecipeGUI gui;
+    private final CategoryRegistry registry;
 
     public RecipeSearchCommand(@Nonnull Server server,
-                               @Nonnull RecipeGUI gui) {
+                               @Nonnull RecipeGUI gui,
+                               @Nonnull CategoryRegistry registry) {
         this.server = server;
         this.gui = gui;
+        this.registry = registry;
     }
 
     @Override
@@ -46,7 +52,7 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
                 .handler(this::handleCommand);
     }
 
-    private List<Recipe> findRecipes(@Nonnull String target) {
+    private List<Recipe> findVanillaRecipes(@Nonnull String target) {
         List<Recipe> recipes = new ArrayList<>();
         Iterator<Recipe> iterator = this.server.recipeIterator();
         while (iterator.hasNext()) {
@@ -63,10 +69,12 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
         Player player = context.sender().source();
         Component title;
         List<Recipe> recipes;
+        List<CustomBrewingRecipe> brewingRecipes;
         if (context.contains(KEY_RECIPE)) {
             String searchTerm = context.get(KEY_RECIPE);
             title = Component.text("Results for: " + searchTerm);
-            recipes = findRecipes(searchTerm);
+            recipes = findVanillaRecipes(searchTerm);
+            brewingRecipes = this.registry.findBrewingRecipes(searchTerm);
         } else {
             ItemStack item = player.getInventory().getItemInMainHand();
             if (item.isEmpty()) {
@@ -78,10 +86,19 @@ public class RecipeSearchCommand extends CustomCommandBean<Source> {
             Component itemName = this.server.getItemFactory().displayName(item);
             title = Component.text("Recipes for: ").append(itemName);
             recipes = this.server.getRecipesFor(item);
+            brewingRecipes = this.registry.findBrewingRecipes(item);
         }
-        if (recipes.isEmpty()) {
+        if (recipes.isEmpty() && brewingRecipes.isEmpty()) {
             player.sendMessage(Component.text("No recipes found!", NamedTextColor.RED));
+            return;
         }
-        this.gui.createGui(title, List.of(new RecipeList(recipes)), null).show(player);
+        List<RecipeElement> elements = new ArrayList<>();
+        if (!recipes.isEmpty()) {
+            elements.add(new RecipeList(recipes));
+        }
+        if (!brewingRecipes.isEmpty()) {
+            elements.add(new BrewingRecipeList(brewingRecipes));
+        }
+        this.gui.createGui(title, elements, null).show(player);
     }
 }

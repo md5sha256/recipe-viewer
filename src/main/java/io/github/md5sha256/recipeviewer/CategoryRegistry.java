@@ -16,6 +16,7 @@ import io.github.md5sha256.recipeviewer.model.RecipeCategoryPointer;
 import io.github.md5sha256.recipeviewer.model.RecipeElement;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
 import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
@@ -23,10 +24,13 @@ import org.bukkit.inventory.ItemStack;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class CategoryRegistry {
@@ -74,6 +78,132 @@ public class CategoryRegistry {
 
     public void clear() {
         this.categories.clear();
+    }
+
+    public @Nonnull List<CustomBrewingRecipe> findBrewingRecipes(@Nonnull String query) {
+        String lowerQuery = query.toLowerCase(Locale.ROOT);
+        List<CustomBrewingRecipe> results = new ArrayList<>();
+        Set<CustomBrewingRecipe> seen = new HashSet<>();
+        for (RecipeCategory category : this.categories.values()) {
+            collectBrewingRecipesMatching(category.elements(), lowerQuery, results, seen);
+        }
+        return results;
+    }
+
+    public @Nonnull List<CustomBrewingRecipe> findBrewingRecipes(@Nonnull ItemStack item) {
+        if (item.isEmpty()) {
+            return List.of();
+        }
+        List<CustomBrewingRecipe> results = new ArrayList<>();
+        Set<CustomBrewingRecipe> seen = new HashSet<>();
+        for (RecipeCategory category : this.categories.values()) {
+            collectBrewingRecipesForItem(category.elements(), item, results, seen);
+        }
+        return results;
+    }
+
+    private void collectBrewingRecipesMatching(
+            @Nonnull List<RecipeElement> elements,
+            @Nonnull String lowerQuery,
+            @Nonnull List<CustomBrewingRecipe> results,
+            @Nonnull Set<CustomBrewingRecipe> seen
+    ) {
+        for (RecipeElement element : elements) {
+            if (element instanceof BrewingRecipeList(List<CustomBrewingRecipe> recipes)) {
+                for (CustomBrewingRecipe recipe : recipes) {
+                    if (seen.add(recipe) && brewingRecipeMatchesQuery(recipe, lowerQuery)) {
+                        results.add(recipe);
+                    }
+                }
+            } else if (element instanceof RecipeCategoryPointer(String name)) {
+                getByName(name).ifPresent(category ->
+                        collectBrewingRecipesMatching(category.elements(), lowerQuery, results, seen));
+            }
+        }
+    }
+
+    private void collectBrewingRecipesForItem(
+            @Nonnull List<RecipeElement> elements,
+            @Nonnull ItemStack item,
+            @Nonnull List<CustomBrewingRecipe> results,
+            @Nonnull Set<CustomBrewingRecipe> seen
+    ) {
+        for (RecipeElement element : elements) {
+            if (element instanceof BrewingRecipeList(List<CustomBrewingRecipe> recipes)) {
+                for (CustomBrewingRecipe recipe : recipes) {
+                    if (seen.add(recipe) && brewingRecipeUsesItem(recipe, item)) {
+                        results.add(recipe);
+                    }
+                }
+            } else if (element instanceof RecipeCategoryPointer(String name)) {
+                getByName(name).ifPresent(category ->
+                        collectBrewingRecipesForItem(category.elements(), item, results, seen));
+            }
+        }
+    }
+
+    private boolean brewingRecipeMatchesQuery(@Nonnull CustomBrewingRecipe recipe, @Nonnull String lowerQuery) {
+        for (ItemStack input : recipe.inputs()) {
+            if (itemMatchesQuery(input, lowerQuery)) {
+                return true;
+            }
+        }
+        if (recipe.ingredient() != null && itemMatchesQuery(recipe.ingredient(), lowerQuery)) {
+            return true;
+        }
+        for (ItemStack output : recipe.outputs()) {
+            if (itemMatchesQuery(output, lowerQuery)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean brewingRecipeUsesItem(@Nonnull CustomBrewingRecipe recipe, @Nonnull ItemStack item) {
+        for (ItemStack input : recipe.inputs()) {
+            if (itemsSimilar(item, input)) {
+                return true;
+            }
+        }
+        if (recipe.ingredient() != null && itemsSimilar(item, recipe.ingredient())) {
+            return true;
+        }
+        for (ItemStack output : recipe.outputs()) {
+            if (itemsSimilar(item, output)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean itemMatchesQuery(@Nonnull ItemStack stack, @Nonnull String lowerQuery) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+        String nexoId = this.nexoFeature.getIdFromItem(stack);
+        if (nexoId != null && nexoId.toLowerCase(Locale.ROOT).contains(lowerQuery)) {
+            return true;
+        }
+        if (stack.getType().getKey().value().contains(lowerQuery)
+                || stack.getType().name().toLowerCase(Locale.ROOT).contains(lowerQuery)) {
+            return true;
+        }
+        String displayName = PlainTextComponentSerializer.plainText()
+                .serialize(this.server.getItemFactory().displayName(stack))
+                .toLowerCase(Locale.ROOT);
+        return displayName.contains(lowerQuery);
+    }
+
+    private boolean itemsSimilar(@Nonnull ItemStack a, @Nonnull ItemStack b) {
+        if (a.isEmpty() || b.isEmpty()) {
+            return false;
+        }
+        String idA = this.nexoFeature.getIdFromItem(a);
+        String idB = this.nexoFeature.getIdFromItem(b);
+        if (idA != null || idB != null) {
+            return idA != null && idA.equals(idB);
+        }
+        return a.isSimilar(b);
     }
 
     public void loadCategories(@Nonnull List<RecipeCategorySetting> settings) {
