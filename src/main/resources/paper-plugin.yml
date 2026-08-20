@@ -1,6 +1,6 @@
 name: 'RecipeViewer'
 version: "${version}"
-api-version: '1.21.4'
+api-version: '26.1.2'
 bootstrapper: 'io.github.md5sha256.recipeviewer.RecipeViewerBootstrap'
 main: 'io.github.md5sha256.recipeviewer.RecipeViewerPlugin'
 authors: [ md5sha256 ]

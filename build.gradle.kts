@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "io.github.md5sha256"
-version = "1.0-SNAPSHOT"
+version = "1.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -17,18 +17,18 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
-    implementation("org.incendo:cloud-paper:2.0.0-beta.10")
+    compileOnly("io.papermc.paper:paper-api:26.1.2.+")
+    implementation("org.incendo:cloud-paper:2.0.0")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.11.5")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     compileOnly("com.nexomc:nexo:1.10.0")
 }
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(25))
 
 tasks {
     compileJava {
-        options.release.set(21)
+        options.release.set(25)
     }
     processResources {
         val version = project.version
@@ -40,7 +40,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin"s jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21.8")
+        minecraftVersion("26.1.2")
     }
     shadowJar {
         val base = "io.github.md5sha256.recipeviewer.libraries"
