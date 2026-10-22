@@ -86,11 +86,11 @@ public class RecipeGUI {
         fillItem.editMeta(meta -> meta.displayName(Component.empty()));
         footerPane.fillWith(fillItem, null, this.plugin);
 
-        PagingButtons pagingButtons = getPagingButtons(5, mainPane);
+        PagingButtons pagingButtons = getPagingButtons(mainPane);
 
-        gui.addPane(mainPane);
-        gui.addPane(footerPane);
-        gui.addPane(pagingButtons);
+        gui.addPane(Slot.fromXY(0, 0), mainPane);
+        gui.addPane(Slot.fromXY(0, 5), footerPane);
+        gui.addPane(Slot.fromXY(3, 5), pagingButtons);
         gui.setOnGlobalClick(event -> event.setCancelled(true));
         if (parent != null) {
             gui.setOnClose(event -> {
@@ -116,7 +116,7 @@ public class RecipeGUI {
     }
 
     private @NotNull StaticPane getFooterPane(@Nullable Gui parent) {
-        StaticPane footerPane = new StaticPane(0, 5, 9, 1, Pane.Priority.LOWEST);
+        StaticPane footerPane = new StaticPane(9, 1, Pane.Priority.LOWEST);
         ItemStack backItem = ItemStack.of(Material.ARROW);
         backItem.editMeta(meta -> {
             Component displayName = Component.text("Back", NamedTextColor.RED)
@@ -133,9 +133,8 @@ public class RecipeGUI {
         return footerPane;
     }
 
-    private @NotNull PagingButtons getPagingButtons(int y, PaginatedPane mainPane) {
-        PagingButtons pagingButtons = new PagingButtons(Slot.fromXY(3, y),
-                3,
+    private @NotNull PagingButtons getPagingButtons(PaginatedPane mainPane) {
+        PagingButtons pagingButtons = new PagingButtons(3,
                 Pane.Priority.HIGH,
                 mainPane,
                 this.plugin);
