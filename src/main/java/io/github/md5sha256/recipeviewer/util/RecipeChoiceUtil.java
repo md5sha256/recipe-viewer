@@ -4,20 +4,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class RecipeChoiceUtil {
 
-    public static List<ItemStack> getItemStacksFromRecipeChoice(@Nonnull RecipeChoice choice) {
-        if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-            return exactChoice.getChoices();
+    public static @Nonnull ItemStack getDisplayItem(@Nonnull RecipeChoice choice) {
+        if (choice == RecipeChoice.empty()) {
+            return ItemStack.empty();
         } else if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
-            return materialChoice.getChoices().stream().map(ItemStack::of).toList();
-        } else if (choice == RecipeChoice.empty()) {
-            return List.of(ItemStack.empty());
+            // MaterialChoice#getItemStack sets an invalid durability when there are several materials
+            return ItemStack.of(materialChoice.getChoices().getFirst());
         }
-        // Other choices (e.g. predicate or item type choices) only expose a representative item
-        return List.of(choice.getItemStack());
+        // Exact choices return their first item and predicate choices their example item
+        return choice.getItemStack();
     }
 
 }

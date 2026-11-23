@@ -28,7 +28,7 @@ public class ShapelessRecipeRenderer implements RecipeRenderer<ShapelessRecipe> 
             CraftingUtil.setOutputSlot(inventory, recipe.getResult());
             for (int index = 0; index < choices.size(); index++) {
                 RecipeChoice choice = choices.get(index);
-                ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice).getFirst();
+                ItemStack item = RecipeChoiceUtil.getDisplayItem(choice);
                 CraftingUtil.setCraftingSlot(inventory, index, item);
             }
             return inventory;

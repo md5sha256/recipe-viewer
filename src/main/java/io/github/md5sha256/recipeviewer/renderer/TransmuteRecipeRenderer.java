@@ -23,10 +23,8 @@ public class TransmuteRecipeRenderer implements RecipeRenderer<TransmuteRecipe> 
     ) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.WORKBENCH);
-            ItemStack input = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getInput())
-                    .getFirst();
-            ItemStack material = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getMaterial())
-                    .getFirst();
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInput());
+            ItemStack material = RecipeChoiceUtil.getDisplayItem(recipe.getMaterial());
 
             CraftingUtil.setOutputSlot(inventory, recipe.getResult());
             CraftingUtil.setCraftingSlot(inventory, 0, input);

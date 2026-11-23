@@ -19,10 +19,9 @@ public class SmithingTransformRecipeRenderer implements RecipeRenderer<SmithingT
                                                  @NotNull SmithingTransformRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.SMITHING);
-            ItemStack template = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getTemplate()).getFirst();
-            ItemStack base = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getBase())
-                    .getFirst();
-            ItemStack addition = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getAddition()).getFirst();
+            ItemStack template = RecipeChoiceUtil.getDisplayItem(recipe.getTemplate());
+            ItemStack base = RecipeChoiceUtil.getDisplayItem(recipe.getBase());
+            ItemStack addition = RecipeChoiceUtil.getDisplayItem(recipe.getAddition());
             inventory.setItem(0, template);
             inventory.setItem(1, base);
             inventory.setItem(2, addition);

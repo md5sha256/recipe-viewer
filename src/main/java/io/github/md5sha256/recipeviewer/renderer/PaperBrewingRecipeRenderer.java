@@ -19,13 +19,11 @@ public class PaperBrewingRecipeRenderer implements RecipeRenderer<BrewingRecipe>
                                                  @NotNull BrewingRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.BREWING);
-            ItemStack input = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getInput())
-                    .getFirst();
-            ItemStack ingredient = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getIngredient())
-                    .getFirst();
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInput());
+            ItemStack ingredient = RecipeChoiceUtil.getDisplayItem(recipe.getIngredient());
             // The recipe describes a single bottle, but fill all three slots like a real brewing stand
             for (int i = 0; i < 3; i++) {
-                inventory.setItem(i, input.clone());
+                inventory.setItem(i, input);
             }
             inventory.setItem(3, ingredient);
             return inventory;

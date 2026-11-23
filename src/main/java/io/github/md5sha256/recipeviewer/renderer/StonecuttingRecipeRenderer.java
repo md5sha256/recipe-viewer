@@ -20,8 +20,7 @@ public class StonecuttingRecipeRenderer implements RecipeRenderer<StonecuttingRe
                                                  @NotNull StonecuttingRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
             StonecutterInventory inventory = (StonecutterInventory) server.createInventory(holder, InventoryType.STONECUTTER);
-            ItemStack input = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getInputChoice())
-                    .getFirst();
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInputChoice());
 
             inventory.setInputItem(input);
             inventory.setResult(recipe.getResult());
