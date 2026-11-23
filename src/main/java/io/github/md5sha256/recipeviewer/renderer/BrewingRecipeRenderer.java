@@ -1,39 +1,32 @@
 package io.github.md5sha256.recipeviewer.renderer;
 
-import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
+import io.github.md5sha256.recipeviewer.util.RecipeChoiceUtil;
 import io.github.md5sha256.recipeviewer.util.RecipeView;
 import org.bukkit.Server;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.BrewingRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Function;
 
-public class BrewingRecipeRenderer implements RecipeRenderer<CustomBrewingRecipe> {
+public class BrewingRecipeRenderer implements RecipeRenderer<BrewingRecipe> {
 
     @Override
     public @NotNull InventoryHolder renderRecipe(@NotNull Server server,
-                                                 @NotNull CustomBrewingRecipe recipe) {
+                                                 @NotNull BrewingRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
-            List<ItemStack> inputs = recipe.inputs();
-            List<ItemStack> outputs = recipe.outputs();
-            ItemStack ingredient = recipe.ingredient();
-            Inventory previous = server.createInventory(holder, InventoryType.BREWING);
+            Inventory inventory = server.createInventory(holder, InventoryType.BREWING);
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInput());
+            ItemStack ingredient = RecipeChoiceUtil.getDisplayItem(recipe.getIngredient());
+            // The recipe describes a single bottle, but fill all three slots like a real brewing stand
             for (int i = 0; i < 3; i++) {
-                previous.setItem(i, i < inputs.size() ? inputs.get(i) : ItemStack.empty());
+                inventory.setItem(i, input);
             }
-            previous.setItem(3, ingredient != null ? ingredient : ItemStack.empty());
-            Inventory completed = server.createInventory(holder, InventoryType.BREWING);
-            if (!recipe.consumeIngredient()) {
-                completed.setItem(3, ingredient != null ? ingredient : ItemStack.empty());
-            }
-            for (int i = 0; i < 3; i++) {
-                completed.setItem(i, i < outputs.size() ? outputs.get(i) : ItemStack.empty());
-            }
-            return previous;
+            inventory.setItem(3, ingredient);
+            return inventory;
         };
         return new RecipeView(func);
     }

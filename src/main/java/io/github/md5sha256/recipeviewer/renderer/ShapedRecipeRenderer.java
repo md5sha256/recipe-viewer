@@ -35,8 +35,7 @@ public class ShapedRecipeRenderer implements RecipeRenderer<ShapedRecipe> {
                     if (choice == null) {
                         continue;
                     }
-                    ItemStack item = RecipeChoiceUtil.getItemStacksFromRecipeChoice(choice)
-                            .getFirst();
+                    ItemStack item = RecipeChoiceUtil.getDisplayItem(choice);
                     CraftingUtil.setCraftingSlot(inventory, row, col, item);
                 }
             }

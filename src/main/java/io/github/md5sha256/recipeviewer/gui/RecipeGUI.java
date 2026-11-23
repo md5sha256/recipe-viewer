@@ -10,12 +10,10 @@ import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.PagingButtons;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import io.github.md5sha256.recipeviewer.CategoryRegistry;
-import io.github.md5sha256.recipeviewer.model.BrewingRecipeList;
 import io.github.md5sha256.recipeviewer.model.RecipeCategory;
 import io.github.md5sha256.recipeviewer.model.RecipeCategoryPointer;
 import io.github.md5sha256.recipeviewer.model.RecipeElement;
 import io.github.md5sha256.recipeviewer.model.RecipeList;
-import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
 import io.github.md5sha256.recipeviewer.renderer.Renderers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -70,10 +68,6 @@ public class RecipeGUI {
                 items.add(item);
             } else if (element instanceof RecipeList(List<Recipe> recipes)) {
                 items.addAll(recipes.stream().map(recipe -> createRecipeItem(recipe, gui)).toList());
-            } else if (element instanceof BrewingRecipeList(List<CustomBrewingRecipe> brewingRecipes)) {
-                items.addAll(brewingRecipes.stream()
-                        .map(brewingRecipe -> createBrewingRecipeItem(brewingRecipe, gui))
-                        .toList());
             }
         }
         PaginatedPane mainPane = new PaginatedPane(9, 5);
@@ -165,23 +159,6 @@ public class RecipeGUI {
     @Nonnull
     private GuiItem createRecipeItem(@Nonnull Recipe recipe, @Nonnull Gui returnGui) {
         ItemStack icon = recipe.getResult().asOne();
-        return new GuiItem(icon, event -> {
-            if (!this.renderers.tryRenderRecipe(this.server, event.getWhoClicked(), recipe, returnGui)) {
-                Component msg = Component.text("Recipe type not supported: " + recipe.getClass(),
-                        NamedTextColor.RED);
-                event.getWhoClicked().sendMessage(msg);
-            }
-        }, this.plugin);
-    }
-
-    private GuiItem createBrewingRecipeItem(@Nonnull CustomBrewingRecipe recipe, @Nonnull Gui returnGui) {
-        ItemStack icon;
-        List<ItemStack> outputs = recipe.outputs();
-        if (!outputs.isEmpty()) {
-            icon = outputs.getFirst().asOne();
-        } else {
-            icon = ItemStack.of(Material.BARRIER);
-        }
         return new GuiItem(icon, event -> {
             if (!this.renderers.tryRenderRecipe(this.server, event.getWhoClicked(), recipe, returnGui)) {
                 Component msg = Component.text("Recipe type not supported: " + recipe.getClass(),

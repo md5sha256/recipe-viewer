@@ -13,7 +13,6 @@ import io.github.md5sha256.recipeviewer.config.RecipeListSetting;
 import io.github.md5sha256.recipeviewer.config.Serializers;
 import io.github.md5sha256.recipeviewer.config.SimpleItemStack;
 import io.github.md5sha256.recipeviewer.gui.RecipeGUI;
-import io.github.md5sha256.recipeviewer.recipe.CustomBrewingRecipe;
 import io.github.md5sha256.recipeviewer.renderer.BlastingRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.BrewingRecipeRenderer;
 import io.github.md5sha256.recipeviewer.renderer.FurnaceRecipeRenderer;
@@ -31,6 +30,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.BlastingRecipe;
+import org.bukkit.inventory.BrewingRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
@@ -232,7 +232,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
                 .registerRenderer(SmokingRecipe.class, new SmokingRecipeRenderer())
                 .registerRenderer(StonecuttingRecipe.class, new StonecuttingRecipeRenderer())
                 .registerRenderer(TransmuteRecipe.class, new TransmuteRecipeRenderer())
-                .registerRenderer(CustomBrewingRecipe.class, new BrewingRecipeRenderer());
+                .registerRenderer(BrewingRecipe.class, new BrewingRecipeRenderer());
     }
 
     private void registerCommands() {
@@ -248,7 +248,7 @@ public final class RecipeViewerPlugin extends JavaPlugin {
         List<CustomCommandBean<Source>> beans = List.of(
                 new RecipeViewCommand(getServer(), this.renderers, this.gui),
                 new ReloadCommand(this),
-                new RecipeSearchCommand(this.getServer(), this.gui, this.registry)
+                new RecipeSearchCommand(this.getServer(), this.gui)
         );
         beans.forEach(bean -> manager.command(bean.configure(rootCommand)));
         var categoryViewCommand = new CategoryViewCommand(this.registry, this.gui).configure(rootCommand).build();

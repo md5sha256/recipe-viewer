@@ -19,8 +19,7 @@ public class SmokingRecipeRenderer implements RecipeRenderer<SmokingRecipe> {
                                                  @NotNull SmokingRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.SMOKER);
-            ItemStack input = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getInputChoice())
-                    .getFirst();
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInputChoice());
             inventory.setItem(0, input);
             inventory.setItem(2, recipe.getResult());
             return inventory;
