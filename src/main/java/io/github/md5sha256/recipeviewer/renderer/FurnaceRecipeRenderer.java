@@ -19,8 +19,7 @@ public class FurnaceRecipeRenderer implements RecipeRenderer<FurnaceRecipe> {
                                                  @NotNull FurnaceRecipe recipe) {
         Function<InventoryHolder, Inventory> func = holder -> {
             Inventory inventory = server.createInventory(holder, InventoryType.FURNACE);
-            ItemStack input = RecipeChoiceUtil.getItemStacksFromRecipeChoice(recipe.getInputChoice())
-                    .getFirst();
+            ItemStack input = RecipeChoiceUtil.getDisplayItem(recipe.getInputChoice());
             inventory.setItem(0, input);
             inventory.setItem(2, recipe.getResult());
             return inventory;

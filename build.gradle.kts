@@ -17,7 +17,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:26.1.2.+")
+    compileOnly("io.papermc.paper:paper-api:26.3.+")
+    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
     implementation("org.incendo:cloud-paper:2.0.1")
     implementation("com.github.stefvanschie.inventoryframework:IF:0.12.2")
     implementation("org.spongepowered:configurate-yaml:4.1.2")
@@ -40,7 +41,7 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin"s jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("26.1.2")
+        minecraftVersion("26.3")
     }
     shadowJar {
         val base = "io.github.md5sha256.recipeviewer.libraries"

@@ -4,17 +4,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class RecipeChoiceUtil {
 
-    public static List<ItemStack> getItemStacksFromRecipeChoice(@Nonnull RecipeChoice choice) {
-        if (choice instanceof RecipeChoice.ExactChoice exactChoice) {
-            return exactChoice.getChoices();
+    public static @Nonnull ItemStack getDisplayItem(@Nonnull RecipeChoice choice) {
+        if (choice == RecipeChoice.empty()) {
+            return ItemStack.empty();
         } else if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
-            return materialChoice.getChoices().stream().map(ItemStack::of).toList();
+            // MaterialChoice#getItemStack sets an invalid durability when there are several materials
+            return ItemStack.of(materialChoice.getChoices().getFirst());
         }
-        throw new UnsupportedOperationException("Recipe choice class not supported: " + choice.getClass());
+        // Exact choices return their first item and predicate choices their example item
+        return choice.getItemStack();
     }
 
 }
