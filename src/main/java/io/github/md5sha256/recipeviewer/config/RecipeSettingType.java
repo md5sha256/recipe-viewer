@@ -3,7 +3,6 @@ package io.github.md5sha256.recipeviewer.config;
 public enum RecipeSettingType {
 
     CATEGORY_NAME,
-    RECIPE_LIST,
-    BREWING_RECIPE_LIST;
+    RECIPE_LIST;
 
 }
