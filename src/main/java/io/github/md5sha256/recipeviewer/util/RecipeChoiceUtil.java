@@ -13,8 +13,11 @@ public class RecipeChoiceUtil {
             return exactChoice.getChoices();
         } else if (choice instanceof RecipeChoice.MaterialChoice materialChoice) {
             return materialChoice.getChoices().stream().map(ItemStack::of).toList();
+        } else if (choice == RecipeChoice.empty()) {
+            return List.of(ItemStack.empty());
         }
-        throw new UnsupportedOperationException("Recipe choice class not supported: " + choice.getClass());
+        // Other choices (e.g. predicate or item type choices) only expose a representative item
+        return List.of(choice.getItemStack());
     }
 
 }
